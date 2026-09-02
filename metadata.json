@@ -1,0 +1,7 @@
+{
+  "name": "TNEB SmartGrid – Official Consumer Electricity Monitoring & TANGEDCO Portal",
+  "description": "Official TNEB & TANGEDCO Smart Electricity Consumption Monitoring Portal featuring real-time AMI smart meter telemetry, TNERC LT Tariff 1A bi-monthly billing, 100-unit free scheme tracker, and Minnagam 1912 outage reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
