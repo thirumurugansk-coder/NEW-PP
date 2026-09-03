@@ -22,7 +22,7 @@ export const BillEstimator: React.FC = () => {
   const { metrics, tariffPlan, calculateBill, userProfile } = useEnergy();
 
   // Bi-monthly units as primary unit of measure for TNEB LT-1A
-  const [biMonthlyUnits, setBiMonthlyUnits] = useState<number>(metrics.bimonthlyUnitsKwh || 380);
+  const [biMonthlyUnits, setBiMonthlyUnits] = useState<number>(metrics.bimonthlyUnitsKwh);
   const [billingCycleMode, setBillingCycleMode] = useState<'bimonthly' | 'monthly'>('bimonthly');
   const [categoryType, setCategoryType] = useState<'LT-1A' | 'LT-3A' | 'LT-3B' | 'LT-4'>('LT-1A');
   const [showPayModal, setShowPayModal] = useState<boolean>(false);
@@ -194,12 +194,12 @@ export const BillEstimator: React.FC = () => {
                   </button>
                 </div>
                 <button
-                  onClick={() => setBiMonthlyUnits(metrics.bimonthlyUnitsKwh || 380)}
+                  onClick={() => setBiMonthlyUnits(metrics.bimonthlyUnitsKwh)}
                   className="flex items-center gap-1 text-xs text-sky-400 hover:underline font-mono"
                   title="Reset to live smart meter telemetry"
                 >
                   <RotateCcw className="h-3 w-3" />
-                  <span>Actual ({metrics.bimonthlyUnitsKwh || 380} U)</span>
+                  <span>Actual ({metrics.bimonthlyUnitsKwh} U)</span>
                 </button>
               </div>
             </div>

@@ -126,13 +126,13 @@ export const Sidebar: React.FC = () => {
             <div className="rounded-lg bg-[#030b1e] p-2 border border-[#1a365d]">
               <div className="text-[9px] text-slate-400">Sanctioned Load</div>
               <div className="font-mono-num font-bold text-amber-300 text-xs">
-                {metrics.tnebSanctionedLoadPercent || 36}% used
+                {metrics.tnebSanctionedLoadPercent}% used
               </div>
             </div>
             <div className="rounded-lg bg-[#030b1e] p-2 border border-[#1a365d]">
               <div className="text-[9px] text-slate-400">Govt Subsidy</div>
               <div className="font-mono-num font-bold text-emerald-300 text-xs">
-                ₹{metrics.govtSubsidyINR || 450}
+                ₹{metrics.govtSubsidyINR}
               </div>
             </div>
           </div>

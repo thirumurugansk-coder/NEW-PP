@@ -63,6 +63,9 @@ export const DashboardOverview: React.FC = () => {
     outageNotices,
     iotConfig,
     isSerialConnected,
+    isWifiConnected,
+    isMqttConnected,
+    isEsp32Connected,
     connectWebSerial,
     disconnectWebSerial,
     dataSourceMode,
@@ -150,7 +153,7 @@ export const DashboardOverview: React.FC = () => {
       <div className="rounded-2xl border border-sky-500/40 bg-gradient-to-r from-[#030b1e] via-[#071b3b] to-[#030b1e] p-4 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold shadow ${
-            isSerialConnected
+            isEsp32Connected
               ? 'bg-emerald-500 text-slate-950'
               : 'bg-gradient-to-br from-amber-400 to-sky-500 text-slate-950'
           }`}>
@@ -162,17 +165,19 @@ export const DashboardOverview: React.FC = () => {
                 <span>ESP32 Physical Hardware Integration</span>
               </h3>
               <span className={`rounded px-2 py-0.5 text-[10px] font-mono font-bold ${
-                isSerialConnected
+                isEsp32Connected
                   ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                  : 'bg-amber-400/20 text-amber-300 border border-amber-400/30'
+                  : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
               }`}>
-                {isSerialConnected ? 'CONNECTED @ 115200' : 'METER NOT CONNECTED'}
+                {isEsp32Connected
+                  ? (isSerialConnected ? 'CONNECTED @ USB SERIAL' : isWifiConnected ? 'CONNECTED @ WIFI' : 'CONNECTED @ MQTT')
+                  : 'DISCONNECTED (NO FAKE TELEMETRY)'}
               </span>
             </div>
             <p className="text-xs text-slate-300 mt-0.5">
-              {isSerialConnected
+              {isEsp32Connected
                 ? 'Streaming active measurements directly from your ESP32 + PZEM-004T / CT sensor module.'
-                : 'Connect your physical ESP32 microcontroller via USB Web Serial, WiFi WebSocket, or MQTT to monitor real circuit currents.'}
+                : 'Hardware disconnected. Real values will stream once your physical ESP32 is connected via USB, WiFi, or MQTT.'}
             </p>
           </div>
         </div>
@@ -181,14 +186,14 @@ export const DashboardOverview: React.FC = () => {
           <button
             onClick={() => setShowConnectModal(true)}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all shadow-md ${
-              isSerialConnected
-                ? 'bg-sky-500 hover:bg-sky-400 text-slate-950'
+              isEsp32Connected
+                ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950'
                 : 'bg-gradient-to-r from-amber-400 via-sky-400 to-sky-500 hover:opacity-95 text-slate-950'
             }`}
             id="dash-connect-esp32-btn"
           >
             <Usb className="h-4 w-4" />
-            <span>{isSerialConnected ? 'Manage ESP32 Link' : 'Connect ESP32 Hardware'}</span>
+            <span>{isEsp32Connected ? 'Manage ESP32 Link' : 'Connect ESP32 Hardware'}</span>
           </button>
 
           <button
@@ -227,7 +232,7 @@ export const DashboardOverview: React.FC = () => {
               <span>Sanctioned: {userProfile.sanctionedLoadKw} kW</span>
             </div>
             <span className="font-mono-num text-amber-300 font-bold">
-              {metrics.tnebSanctionedLoadPercent || 36}% capacity
+              {metrics.tnebSanctionedLoadPercent}% capacity
             </span>
           </div>
         </div>
@@ -251,13 +256,19 @@ export const DashboardOverview: React.FC = () => {
           </div>
 
           <div className="mt-3 flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-[#1a365d]">
-            <div className="flex items-center gap-1 text-emerald-400">
-              <TrendingDown className="h-3 w-3" />
-              <span>-5.4% vs yesterday</span>
-            </div>
-            <span className="font-mono-num font-semibold text-slate-200">
-              Run-rate: ~{(metrics.dailyConsumptionKwh * 30).toFixed(0)} units/mo
-            </span>
+            {isEsp32Connected ? (
+              <>
+                <div className="flex items-center gap-1 text-emerald-400">
+                  <TrendingDown className="h-3 w-3" />
+                  <span>-5.4% vs yesterday</span>
+                </div>
+                <span className="font-mono-num font-semibold text-slate-200">
+                  Run-rate: ~{(metrics.dailyConsumptionKwh * 30).toFixed(0)} units/mo
+                </span>
+              </>
+            ) : (
+              <span className="text-slate-500 font-medium">No Hardware Stream Active</span>
+            )}
           </div>
         </div>
 
@@ -274,13 +285,17 @@ export const DashboardOverview: React.FC = () => {
 
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-extrabold font-mono-num text-amber-300 tracking-tight">
-              ₹{metrics.estimatedBiMonthlyBillINR || 1240}
+              ₹{metrics.estimatedBiMonthlyBillINR}
             </span>
             <span className="text-xs font-medium text-slate-400">for 60 days</span>
           </div>
 
           <div className="mt-3 flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-[#1a365d]">
-            <span className="text-emerald-400 font-semibold">100 Free Units Saved ₹450</span>
+            {isEsp32Connected ? (
+              <span className="text-emerald-400 font-semibold">100 Free Units Applied</span>
+            ) : (
+              <span className="text-slate-500">Connect ESP32 to Calculate Bill</span>
+            )}
             <button
               onClick={() => setActiveTab('bill')}
               className="text-sky-400 hover:underline flex items-center gap-0.5 font-semibold"
@@ -304,11 +319,13 @@ export const DashboardOverview: React.FC = () => {
 
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-extrabold font-mono-num text-emerald-300 tracking-tight">
-              {metrics.efficiencyScore}
+              {isEsp32Connected ? metrics.efficiencyScore : '--'}
             </span>
             <span className="text-xs font-medium text-slate-400">/ 100</span>
             <span className="ml-auto rounded bg-emerald-500/20 px-2 py-0.5 text-[11px] font-bold text-emerald-300 border border-emerald-500/30">
-              {metrics.efficiencyScore > 80 ? 'Grade A+' : metrics.efficiencyScore > 65 ? 'Grade B' : 'Grade C'}
+              {isEsp32Connected
+                ? metrics.efficiencyScore > 80 ? 'Grade A+' : metrics.efficiencyScore > 65 ? 'Grade B' : 'Grade C'
+                : 'Offline'}
             </span>
           </div>
 
@@ -381,7 +398,7 @@ export const DashboardOverview: React.FC = () => {
               Sanctioned Load Utilized: <strong className="text-amber-300">{(metrics.currentPowerWatts / 1000).toFixed(2)} kW / {userProfile.sanctionedLoadKw} kW</strong>
             </span>
             <span>
-              Govt Subsidy Benefitted: <strong className="text-emerald-400 font-bold">₹{metrics.govtSubsidyINR || 450}.00</strong>
+              Govt Subsidy Benefitted: <strong className="text-emerald-400 font-bold">₹{metrics.govtSubsidyINR}.00</strong>
             </span>
           </div>
         </div>
@@ -430,7 +447,27 @@ export const DashboardOverview: React.FC = () => {
           </div>
 
           {/* Chart Container */}
-          <div className="h-72 w-full pt-2">
+          <div className="relative h-72 w-full pt-2">
+            {chartMode === 'live' && !isEsp32Connected && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-[#030b1e]/75 backdrop-blur-[2px] p-4 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-sky-500 text-slate-950 font-black shadow-lg mb-3">
+                  <Cpu className="h-6 w-6" />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-1">
+                  ESP32 Microcontroller Disconnected
+                </h4>
+                <p className="max-w-md text-xs text-slate-300 mb-3">
+                  Real-time telemetry is held at <strong className="text-amber-300">0 W</strong>. Simulated or fake data generation is disabled. Connect your physical ESP32 to stream active PZEM/CT readings.
+                </p>
+                <button
+                  onClick={() => setShowConnectModal(true)}
+                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-sky-400 to-sky-500 px-4 py-2 text-xs font-black text-slate-950 shadow-md hover:opacity-95 transition-all"
+                >
+                  <Usb className="h-4 w-4" />
+                  <span>Connect ESP32 (Web Serial / WiFi / MQTT)</span>
+                </button>
+              </div>
+            )}
             <ResponsiveContainer width="100%" height="100%">
               {chartMode === 'live' ? (
                 <AreaChart data={liveTelemetry} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

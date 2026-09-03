@@ -1,7 +1,8 @@
 {
-  "name": "TNEB SmartGrid – Official Consumer Electricity Monitoring & TANGEDCO Portal",
-  "description": "Official TNEB & TANGEDCO Smart Electricity Consumption Monitoring Portal featuring real-time AMI smart meter telemetry, TNERC LT Tariff 1A bi-monthly billing, 100-unit free scheme tracker, and Minnagam 1912 outage reporting.",
+  "name": "VoltPulse IoT",
+  "description": "VoltPulse IoT – Smart Energy & Power Telemetry Monitoring System featuring real-time ESP32 IoT integration, smart meter telemetry, dynamic bill calculation, load analytics, and circuit monitoring.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
+
 

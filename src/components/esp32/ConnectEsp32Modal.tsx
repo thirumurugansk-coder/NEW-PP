@@ -29,8 +29,13 @@ export const ConnectEsp32Modal: React.FC<ConnectEsp32ModalProps> = ({ isOpen, on
   const {
     metrics,
     isSerialConnected,
+    isWifiConnected,
+    isMqttConnected,
+    isEsp32Connected,
+    setWifiConnected,
     connectWebSerial,
     disconnectWebSerial,
+    disconnectHardware,
     setActiveTab,
     dataSourceMode,
     setDataSourceMode,
@@ -44,7 +49,6 @@ export const ConnectEsp32Modal: React.FC<ConnectEsp32ModalProps> = ({ isOpen, on
   const [port, setPort] = useState<number>(81);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const [wifiConnected, setWifiConnected] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isOpen) {
@@ -101,10 +105,16 @@ export const ConnectEsp32Modal: React.FC<ConnectEsp32ModalProps> = ({ isOpen, on
       };
 
       ws.onerror = () => {
+        setWifiConnected(false);
         setConnectionError(`Could not establish WebSocket connection to ws://${ipAddress}:${port}/ws. Verify ESP32 IP & network.`);
         setIsConnecting(false);
       };
+
+      ws.onclose = () => {
+        setWifiConnected(false);
+      };
     } catch (err: any) {
+      setWifiConnected(false);
       setConnectionError(err.message || 'WiFi WebSocket connection failed.');
       setIsConnecting(false);
     }
@@ -145,13 +155,13 @@ export const ConnectEsp32Modal: React.FC<ConnectEsp32ModalProps> = ({ isOpen, on
           <div className="flex items-center gap-2.5">
             <span className="relative flex h-3.5 w-3.5">
               <span
-                className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${
-                  isSerialConnected || wifiConnected ? 'bg-emerald-400' : 'bg-amber-400'
+                className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                  isEsp32Connected ? 'bg-emerald-400 animate-ping' : 'bg-rose-400'
                 }`}
               />
               <span
                 className={`relative inline-flex h-3.5 w-3.5 rounded-full ${
-                  isSerialConnected || wifiConnected ? 'bg-emerald-500' : 'bg-amber-400'
+                  isEsp32Connected ? 'bg-emerald-500' : 'bg-rose-400'
                 }`}
               />
             </span>
@@ -159,24 +169,23 @@ export const ConnectEsp32Modal: React.FC<ConnectEsp32ModalProps> = ({ isOpen, on
               <div className="text-xs font-bold text-white">
                 {isSerialConnected
                   ? 'ESP32 Connected via USB Web Serial'
-                  : wifiConnected
+                  : isWifiConnected
                   ? 'ESP32 Connected via Local WiFi WebSocket'
-                  : 'Hardware Node Disconnected (Running Demo Feeder Stream)'}
+                  : isMqttConnected
+                  ? 'ESP32 Connected via MQTT SCADA Broker'
+                  : 'ESP32 Disconnected (No Telemetry — 0 W / 0 V / 0 A)'}
               </div>
               <div className="text-[11px] text-slate-400 font-mono">
-                {isSerialConnected || wifiConnected
+                {isEsp32Connected
                   ? `Live Telemetry: ${metrics.voltageVolts}V | ${metrics.currentAmps}A | ${metrics.currentPowerWatts}W`
-                  : 'Select a connection protocol below to connect your real device'}
+                  : 'Hardware offline. Plug in your ESP32 below to receive real readings.'}
               </div>
             </div>
           </div>
 
-          {(isSerialConnected || wifiConnected) && (
+          {isEsp32Connected && (
             <button
-              onClick={() => {
-                if (isSerialConnected) disconnectWebSerial();
-                if (wifiConnected) setWifiConnected(false);
-              }}
+              onClick={() => disconnectHardware()}
               className="rounded-lg bg-rose-500/20 border border-rose-500/40 px-3 py-1.5 text-xs font-bold text-rose-300 hover:bg-rose-500/30 transition-all"
             >
               Disconnect
@@ -332,7 +341,7 @@ export const ConnectEsp32Modal: React.FC<ConnectEsp32ModalProps> = ({ isOpen, on
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-400 to-blue-600 p-2.5 font-bold text-slate-950 shadow-lg hover:opacity-95 transition-all"
               >
                 {isConnecting ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Wifi className="h-4 w-4" />}
-                <span>{wifiConnected ? 'Reconnect WebSocket' : 'Connect Wireless WebSocket'}</span>
+                <span>{isWifiConnected ? 'Reconnect WebSocket' : 'Connect Wireless WebSocket'}</span>
               </button>
             </div>
           )}

@@ -37,6 +37,7 @@ export const ApplianceMonitoring: React.FC = () => {
     metrics,
     tariffPlan,
     userProfile,
+    isEsp32Connected,
   } = useEnergy();
 
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -70,8 +71,8 @@ export const ApplianceMonitoring: React.FC = () => {
     return matchesCategory && matchesSearch;
   });
 
-  const totalStandbyWatts = appliances.reduce((sum, a) => sum + a.standbyWatts, 0);
-  const totalActiveWatts = appliances.reduce((sum, a) => sum + (a.status === 'on' ? a.currentWatts : 0), 0);
+  const totalStandbyWatts = isEsp32Connected ? appliances.reduce((sum, a) => sum + a.standbyWatts, 0) : 0;
+  const totalActiveWatts = isEsp32Connected ? appliances.reduce((sum, a) => sum + (a.status === 'on' ? a.currentWatts : 0), 0) : 0;
   const activeKw = totalActiveWatts / 1000;
   const isOverSanctioned = activeKw > userProfile.sanctionedLoadKw;
 
@@ -144,10 +145,10 @@ export const ApplianceMonitoring: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-3 text-xs font-mono-num">
             <span className="rounded-xl bg-[#030b1e] px-3 py-1.5 border border-[#1a365d] text-slate-300">
-              Live Draw: <strong className="text-amber-300 font-bold">{totalActiveWatts} W</strong> ({activeKw.toFixed(2)} kW)
+              Live Draw: <strong className="text-amber-300 font-bold">{isEsp32Connected ? `${totalActiveWatts} W` : '0 W'}</strong> ({isEsp32Connected ? `${activeKw.toFixed(2)} kW` : 'Hardware Offline'})
             </span>
             <span className="rounded-xl bg-[#030b1e] px-3 py-1.5 border border-[#1a365d] text-slate-300">
-              Standby Drain: <strong className="text-sky-300 font-bold">{totalStandbyWatts} W</strong>
+              Standby Drain: <strong className="text-sky-300 font-bold">{isEsp32Connected ? `${totalStandbyWatts} W` : '0 W'}</strong>
             </span>
           </div>
 
@@ -271,7 +272,7 @@ export const ApplianceMonitoring: React.FC = () => {
                 <div className="rounded-xl bg-[#030b1e] p-2.5 border border-[#1a365d]">
                   <div className="text-[10px] text-slate-400">Active Draw</div>
                   <div className="text-base font-black text-amber-300">
-                    {app.status === 'on' ? `${app.currentWatts} W` : '0 W'}
+                    {isEsp32Connected && app.status === 'on' ? `${app.currentWatts} W` : '0 W'}
                   </div>
                   <div className="text-[10px] text-slate-400 font-sans">
                     Rated: {app.ratingWatts}W
@@ -281,10 +282,10 @@ export const ApplianceMonitoring: React.FC = () => {
                 <div className="rounded-xl bg-[#030b1e] p-2.5 border border-[#1a365d]">
                   <div className="text-[10px] text-slate-400">Bi-Monthly Est.</div>
                   <div className="text-base font-black text-slate-100">
-                    ₹{estimatedCostBiMonthly}
+                    {isEsp32Connected ? `₹${estimatedCostBiMonthly}` : '₹0.00'}
                   </div>
                   <div className="text-[10px] text-slate-400 font-sans">
-                    {(app.monthlyKwh * 2).toFixed(0)} Units/cycle
+                    {isEsp32Connected ? `${(app.monthlyKwh * 2).toFixed(0)} Units/cycle` : 'Sensor Offline'}
                   </div>
                 </div>
               </div>

@@ -17,12 +17,21 @@ import { EnergyAdvisor } from './components/advisor/EnergyAdvisor';
 import { ProfileAndHardware } from './components/profile/ProfileAndHardware';
 import { Esp32Integration } from './components/esp32/Esp32Integration';
 import { Zap, ShieldCheck, Heart, Radio, Activity } from 'lucide-react';
+import controlCenterBg from './assets/images/voltpulse_iot_background_1788444639285.jpg';
 
 const MainContent: React.FC = () => {
   const { activeTab, setActiveTab, iotConfig, metrics } = useEnergy();
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950">
+    <div
+      className="min-h-screen flex flex-col bg-[#0D1520] text-slate-100 font-sans selection:bg-[#C5A059] selection:text-slate-950 relative"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(13, 21, 32, 0.88), rgba(9, 15, 23, 0.95)), url(${controlCenterBg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       {/* Top Navbar */}
       <Navbar />
 
@@ -53,7 +62,7 @@ const MainContent: React.FC = () => {
               <Zap className="h-3.5 w-3.5" />
             </div>
             <span className="font-bold text-slate-200">
-              WattWise Smart Energy Monitoring System
+              VoltPulse IoT Smart Energy Monitoring System
             </span>
             <span className="text-slate-700">|</span>
             <span>IoT & ECE Engineering Capstone</span>

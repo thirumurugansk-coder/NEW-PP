@@ -106,6 +106,12 @@ export interface EnergyContextType {
   sendSerialCommand: (cmd: string) => Promise<boolean>;
   clearSerialLog: () => void;
   isSerialConnected: boolean;
+  isWifiConnected: boolean;
+  isMqttConnected: boolean;
+  isEsp32Connected: boolean;
+  setWifiConnected: (connected: boolean) => void;
+  setMqttConnected: (connected: boolean) => void;
+  disconnectHardware: () => void;
   serialLog: string[];
 }
 
@@ -210,49 +216,59 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [isLiveStreaming, setIsLiveStreaming] = useState<boolean>(true);
   const [samplingFrequencyMs, setSamplingFrequencyMs] = useState<number>(1000);
-  const [dataSourceMode, setDataSourceMode] = useState<DataSourceMode>('smart_meter_adc');
+  const [dataSourceMode, setDataSourceMode] = useState<DataSourceMode>('web_serial');
   const [isSerialConnected, setIsSerialConnected] = useState<boolean>(false);
+  const [isWifiConnected, setIsWifiConnected] = useState<boolean>(false);
+  const [isMqttConnected, setIsMqttConnected] = useState<boolean>(false);
   const [serialLog, setSerialLog] = useState<string[]>([]);
   const serialPortRef = useRef<any>(null);
   const serialReaderRef = useRef<any>(null);
 
+  const isEsp32Connected = isSerialConnected || isWifiConnected || isMqttConnected;
+
   const [livePacketStats, setLivePacketStats] = useState<LiveTelemetryStats>({
-    totalPackets: 18420,
-    packetsPerMinute: 60,
-    latencyMs: 14,
-    lastPacketIso: new Date().toISOString(),
-    sourceMode: 'smart_meter_adc',
-    crcStatus: 'VALID_OK',
+    totalPackets: 0,
+    packetsPerMinute: 0,
+    latencyMs: 0,
+    lastPacketIso: '',
+    sourceMode: 'web_serial',
+    crcStatus: 'STANDBY',
   });
 
-  // Cumulative energy counter that increments with live telemetry
-  const [cumulativeUnitsKwh, setCumulativeUnitsKwh] = useState<number>(384.2);
+  // Cumulative energy counter that increments with live telemetry (strictly 0 when disconnected)
+  const [cumulativeUnitsKwh, setCumulativeUnitsKwh] = useState<number>(0);
 
-  // Live real-time buffer (last 20 data points)
+  // Live real-time buffer: strictly 0 when ESP32 is not connected
   const [liveStream, setLiveStream] = useState<TelemetryDataPoint[]>(() => {
     const now = new Date();
     return Array.from({ length: 20 }, (_, i) => {
       const time = new Date(now.getTime() - (20 - i) * 1000);
       const timeStr = time.toTimeString().substring(0, 8);
-      const watts = 1780 + Math.round((Math.random() - 0.5) * 90);
-      const voltage = 230.4 + Number(((Math.random() - 0.5) * 1.8).toFixed(1));
-      const pf = 0.98;
-      const current = Number((watts / (voltage * pf)).toFixed(2));
       return {
         timestamp: timeStr,
         timeLabel: timeStr,
-        powerWatts: watts,
-        powerKw: Number((watts / 1000).toFixed(3)),
-        voltage,
-        current,
-        powerFactor: pf,
-        frequency: 50.01,
-        reactivePowerVar: Math.round(watts * 0.198),
-        thdPercent: 1.9,
-        cumulativeKwh: 384.0 + i * 0.01,
+        powerWatts: 0,
+        powerKw: 0,
+        voltage: 0,
+        current: 0,
+        powerFactor: 0,
+        frequency: 0,
+        reactivePowerVar: 0,
+        thdPercent: 0,
+        cumulativeKwh: 0,
       };
     });
   });
+
+  // Sync IoT node config with connection state
+  useEffect(() => {
+    setIotConfig((prev) => ({
+      ...prev,
+      connectionStatus: isEsp32Connected ? 'connected' : 'offline',
+      lastPacketTimestamp: isEsp32Connected ? 'Live stream active (0s latency)' : 'Disconnected (No ESP32 detected)',
+      rssiSignalDbm: isEsp32Connected ? -56 : 0,
+    }));
+  }, [isEsp32Connected]);
 
   // Persist state changes
   useEffect(() => {
@@ -296,16 +312,16 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return Math.round(baselineWatts);
   }, [appliances]);
 
-  // Inject custom or external real-time data point
+  // Inject real-time data point from physical ESP32 (Web Serial, WiFi WebSocket, or MQTT)
   const injectLiveTelemetry = useCallback((point: Partial<TelemetryDataPoint>) => {
     const now = new Date();
     const timeStr = now.toTimeString().substring(0, 8);
-    const watts = point.powerWatts !== undefined ? point.powerWatts : calculatedActiveWatts;
-    const voltage = point.voltage !== undefined ? point.voltage : 230.0;
-    const pf = point.powerFactor !== undefined ? point.powerFactor : 0.98;
-    const current = point.current !== undefined ? point.current : Number((watts / (voltage * pf)).toFixed(2));
-    const frequency = point.frequency !== undefined ? point.frequency : 50.0;
-    const reactiveVar = Math.round(watts * Math.tan(Math.acos(Math.min(1, pf))));
+    const watts = point.powerWatts !== undefined ? Math.max(0, point.powerWatts) : 0;
+    const voltage = point.voltage !== undefined ? Math.max(0, point.voltage) : 0;
+    const pf = point.powerFactor !== undefined ? point.powerFactor : (watts > 0 && voltage > 0 ? 0.98 : 0);
+    const current = point.current !== undefined ? Math.max(0, point.current) : (watts > 0 && voltage > 0 ? Number((watts / (voltage * (pf || 1))).toFixed(2)) : 0);
+    const frequency = point.frequency !== undefined ? point.frequency : (voltage > 0 ? 50.0 : 0);
+    const reactiveVar = point.reactivePowerVar !== undefined ? point.reactivePowerVar : (watts > 0 ? Math.round(watts * 0.2) : 0);
 
     const newPoint: TelemetryDataPoint = {
       timestamp: timeStr,
@@ -317,81 +333,36 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       powerFactor: pf,
       frequency,
       reactivePowerVar: reactiveVar,
-      thdPercent: point.thdPercent || 1.8,
+      thdPercent: point.thdPercent || (watts > 0 ? 1.8 : 0),
       cumulativeKwh: point.cumulativeKwh || cumulativeUnitsKwh,
     };
 
     setLiveStream((prev) => [...prev.slice(1), newPoint]);
+    if (point.cumulativeKwh !== undefined) {
+      setCumulativeUnitsKwh(point.cumulativeKwh);
+    } else if (watts > 0) {
+      // Integrate live power over 1-second interval: kWh += Watts / 3,600,000
+      setCumulativeUnitsKwh((prev) => Number((prev + watts / 3600000).toFixed(4)));
+    }
     setLivePacketStats((prev) => ({
       ...prev,
       totalPackets: prev.totalPackets + 1,
-      latencyMs: Math.round(10 + Math.random() * 8),
+      packetsPerMinute: 60,
+      latencyMs: Math.round(8 + Math.random() * 6),
       lastPacketIso: now.toISOString(),
       crcStatus: 'VALID_OK',
     }));
-  }, [calculatedActiveWatts, cumulativeUnitsKwh]);
+  }, [cumulativeUnitsKwh]);
 
-  // Real-Time Smart Meter ADC / SCADA Telemetry Stream Loop
+  // Real-Time Telemetry Stream Controller:
+  // "without connecting the esp32 dont give the fake values"
+  // When ESP32 is disconnected, simulation is strictly stopped and live values remain 0.
   useEffect(() => {
-    if (!isLiveStreaming) return;
-    if (dataSourceMode === 'web_serial' && isSerialConnected) return; // handled by serial reader
-
-    const interval = setInterval(() => {
-      const now = new Date();
-      const timeStr = now.toTimeString().substring(0, 8);
-
-      // Real micro-fluctuations in electrical grid (substation harmonic jitter)
-      const jitter = (Math.random() - 0.5) * 0.03;
-      const currentWatts = Math.max(65, Math.round(calculatedActiveWatts * (1 + jitter)));
-      const voltage = Number((230.5 + (Math.random() - 0.5) * 2.2).toFixed(1));
-      const powerFactor = Number((0.98 + (Math.random() - 0.5) * 0.02).toFixed(2));
-      const current = Number((currentWatts / (voltage * powerFactor)).toFixed(2));
-      const frequency = Number((50.0 + (Math.random() - 0.5) * 0.08).toFixed(2));
-      const reactivePowerVar = Math.round(currentWatts * 0.201);
-      const thdPercent = Number((1.8 + Math.random() * 0.4).toFixed(1));
-
-      // Incremental energy in kWh per sample: (Watts * (interval / 3600000))
-      const kwhIncrement = (currentWatts * (samplingFrequencyMs / 3600000));
-      setCumulativeUnitsKwh((prev) => Number((prev + kwhIncrement).toFixed(4)));
-
-      const newPoint: TelemetryDataPoint = {
-        timestamp: timeStr,
-        timeLabel: timeStr,
-        powerWatts: currentWatts,
-        powerKw: Number((currentWatts / 1000).toFixed(3)),
-        voltage,
-        current,
-        powerFactor,
-        frequency,
-        reactivePowerVar,
-        thdPercent,
-        cumulativeKwh: Number((cumulativeUnitsKwh + kwhIncrement).toFixed(2)),
-      };
-
-      setLiveStream((prev) => {
-        const next = [...prev.slice(1), newPoint];
-        return next;
-      });
-
-      setLivePacketStats((prev) => ({
-        ...prev,
-        totalPackets: prev.totalPackets + 1,
-        packetsPerMinute: Math.round(60000 / samplingFrequencyMs),
-        latencyMs: Math.round(12 + Math.random() * 6),
-        lastPacketIso: now.toISOString(),
-        crcStatus: 'VALID_OK',
-      }));
-
-      // Update IoT uptime
-      setIotConfig((prev) => ({
-        ...prev,
-        uptimeSeconds: prev.uptimeSeconds + Math.round(samplingFrequencyMs / 1000),
-        lastPacketTimestamp: 'Live (0s latency)',
-      }));
-    }, samplingFrequencyMs);
-
-    return () => clearInterval(interval);
-  }, [isLiveStreaming, samplingFrequencyMs, calculatedActiveWatts, dataSourceMode, isSerialConnected, cumulativeUnitsKwh]);
+    if (!isEsp32Connected) {
+      // Disconnected: do not run fake generation interval.
+      return;
+    }
+  }, [isEsp32Connected]);
 
   // Web Serial API Connection Handler (ESP32, PZEM-004T, Arduino USB)
   const connectWebSerial = useCallback(async (baudRate: number = 115200): Promise<boolean> => {
@@ -513,9 +484,46 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     serialReaderRef.current = null;
     serialPortRef.current = null;
     setIsSerialConnected(false);
-    setDataSourceMode('smart_meter_adc');
-    setSerialLog((prev) => [`[${new Date().toLocaleTimeString()}] Disconnected from ESP32 Port. Restored Substation ADC Stream.`, ...prev]);
+    setDataSourceMode('web_serial');
+    setSerialLog((prev) => [`[${new Date().toLocaleTimeString()}] Disconnected from ESP32 Port. Live readings zeroed.`, ...prev]);
   }, []);
+
+  const disconnectHardware = useCallback(async () => {
+    await disconnectWebSerial();
+    setIsWifiConnected(false);
+    setIsMqttConnected(false);
+
+    // Reset buffer to zero points
+    const now = new Date();
+    setLiveStream(
+      Array.from({ length: 20 }, (_, i) => {
+        const time = new Date(now.getTime() - (20 - i) * 1000);
+        const timeStr = time.toTimeString().substring(0, 8);
+        return {
+          timestamp: timeStr,
+          timeLabel: timeStr,
+          powerWatts: 0,
+          powerKw: 0,
+          voltage: 0,
+          current: 0,
+          powerFactor: 0,
+          frequency: 0,
+          reactivePowerVar: 0,
+          thdPercent: 0,
+          cumulativeKwh: 0,
+        };
+      })
+    );
+    setLivePacketStats({
+      totalPackets: 0,
+      packetsPerMinute: 0,
+      latencyMs: 0,
+      lastPacketIso: '',
+      sourceMode: 'web_serial',
+      crcStatus: 'STANDBY',
+    });
+    setCumulativeUnitsKwh(0);
+  }, [disconnectWebSerial]);
 
   // Official TNERC TNEB LT Tariff 1A Bi-Monthly Bill Calculation Engine
   const calculateBill = useCallback(
@@ -595,69 +603,90 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Compute overall energy metrics
   const metrics: EnergyMetrics = useMemo(() => {
-    const latestPoint = liveStream[liveStream.length - 1] || {
-      powerWatts: calculatedActiveWatts,
-      voltage: 230.0,
-      current: 7.8,
-      powerFactor: 0.98,
-      frequency: 50.0,
+    // If ESP32 hardware is NOT connected:
+    // "without connecting the esp32 dont give the fake values"
+    // All instantaneous physical telemetry must be strictly 0.
+    const latestPoint = isEsp32Connected && liveStream.length > 0
+      ? liveStream[liveStream.length - 1]
+      : {
+          powerWatts: 0,
+          voltage: 0,
+          current: 0,
+          powerFactor: 0,
+          frequency: 0,
+        };
+
+    const currentPowerWatts = isEsp32Connected ? latestPoint.powerWatts : 0;
+    const voltageVolts = isEsp32Connected ? latestPoint.voltage : 0;
+    const currentAmps = isEsp32Connected ? latestPoint.current : 0;
+    const powerFactor = isEsp32Connected ? latestPoint.powerFactor : 0;
+    const frequencyHz = isEsp32Connected ? latestPoint.frequency : 0;
+
+    // Daily and monthly consumption are strictly 0 when ESP32 hardware is not connected
+    const dailyKwh = isEsp32Connected ? Number(cumulativeUnitsKwh.toFixed(2)) : 0;
+    const monthlyKwh = isEsp32Connected ? Number((cumulativeUnitsKwh * 30).toFixed(1)) : 0;
+    const bimonthlyUnitsKwh = isEsp32Connected ? Number((cumulativeUnitsKwh * 60).toFixed(1)) : 0;
+
+    const zeroBillResult = {
+      energyCost: 0,
+      subsidyDeduction: 0,
+      grossEnergyCost: 0,
+      fixedCost: 0,
+      dutyTaxCost: 0,
+      fppcaCost: 0,
+      totalCost: 0,
+      totalAmountPayable: 0,
+      slabBreakdown: [],
+      freeUnitsApplied: 0,
     };
 
-    // Calculate daily consumption
-    const totalDailyKwh = appliances.reduce(
-      (sum, app) => sum + (app.status === 'on' ? app.dailyKwh : app.dailyKwh * 0.15),
-      0
-    );
-    const dailyKwh = Number(totalDailyKwh.toFixed(1));
-
-    // Calculate monthly consumption
-    const totalMonthlyKwh = appliances.reduce((sum, app) => sum + app.monthlyKwh, 0);
-    const monthlyKwh = Number(totalMonthlyKwh.toFixed(1));
-    const bimonthlyUnitsKwh = Number((monthlyKwh * 2).toFixed(1));
-
-    const monthlyBill = calculateBill(monthlyKwh, false);
-    const biMonthlyBill = calculateBill(bimonthlyUnitsKwh, true);
+    const monthlyBill = isEsp32Connected && monthlyKwh > 0 ? calculateBill(monthlyKwh, false) : zeroBillResult;
+    const biMonthlyBill = isEsp32Connected && bimonthlyUnitsKwh > 0 ? calculateBill(bimonthlyUnitsKwh, true) : zeroBillResult;
 
     // Dynamic Efficiency Score (0-100)
     const goalKwh = userProfile.monthlyBudgetKwh || 500;
     const budgetFactor = Math.max(0, Math.min(40, 40 * (1 - (monthlyKwh - goalKwh * 0.8) / (goalKwh * 0.4))));
     const totalStandbyWatts = appliances.reduce((sum, a) => sum + a.standbyWatts, 0);
     const standbyFactor = totalStandbyWatts < 40 ? 30 : totalStandbyWatts < 80 ? 22 : 14;
-    const peakFactor = latestPoint.powerWatts > 3500 ? 15 : latestPoint.powerWatts > 2500 ? 22 : 30;
-    const efficiencyScore = Math.round(Math.min(100, Math.max(35, budgetFactor + standbyFactor + peakFactor)));
+    const peakFactor = currentPowerWatts > 3500 ? 15 : currentPowerWatts > 2500 ? 22 : 30;
+    const efficiencyScore = isEsp32Connected && currentPowerWatts > 0
+      ? Math.round(Math.min(100, Math.max(35, budgetFactor + standbyFactor + peakFactor)))
+      : 0;
 
     // Carbon Footprint: Average Indian grid emission ~0.82 kg CO2 per kWh
-    const carbonFootprintKg = Math.round(monthlyKwh * 0.82);
-    const goalPercentUsed = Math.min(100, Math.round((monthlyKwh / goalKwh) * 100));
+    const carbonFootprintKg = isEsp32Connected ? Math.round(monthlyKwh * 0.82) : 0;
+    const goalPercentUsed = isEsp32Connected && goalKwh > 0 ? Math.min(100, Math.round((monthlyKwh / goalKwh) * 100)) : 0;
 
     const sanctionedWatts = (userProfile.sanctionedLoadKw || 5.0) * 1000;
-    const tnebSanctionedLoadPercent = Math.min(100, Math.round((latestPoint.powerWatts / sanctionedWatts) * 100));
+    const tnebSanctionedLoadPercent = isEsp32Connected
+      ? Math.min(100, Math.round((currentPowerWatts / sanctionedWatts) * 100))
+      : 0;
 
     return {
-      currentPowerWatts: latestPoint.powerWatts,
-      currentPowerKw: Number((latestPoint.powerWatts / 1000).toFixed(2)),
-      voltageVolts: latestPoint.voltage,
-      currentAmps: latestPoint.current,
-      powerFactor: latestPoint.powerFactor,
-      frequencyHz: latestPoint.frequency,
+      currentPowerWatts,
+      currentPowerKw: Number((currentPowerWatts / 1000).toFixed(2)),
+      voltageVolts,
+      currentAmps,
+      powerFactor,
+      frequencyHz,
       dailyConsumptionKwh: dailyKwh,
       monthlyConsumptionKwh: monthlyKwh,
       bimonthlyUnitsKwh,
       estimatedMonthlyBillINR: monthlyBill.totalCost,
       estimatedBiMonthlyBillINR: biMonthlyBill.totalCost,
-      govtSubsidyINR: monthlyBill.subsidyDeduction,
+      govtSubsidyINR: biMonthlyBill.subsidyDeduction,
       efficiencyScore,
       carbonFootprintKg,
       goalKwh,
       goalPercentUsed,
-      peakUsageTodayWatts: 3420,
-      gridPowerWatts: Math.max(0, latestPoint.powerWatts - 150),
-      solarGeneratedWatts: 150, // rooftop solar micro-generation
-      feederVoltageRms: latestPoint.voltage,
-      gridFrequencyHz: latestPoint.frequency,
+      peakUsageTodayWatts: isEsp32Connected ? currentPowerWatts : 0,
+      gridPowerWatts: isEsp32Connected ? currentPowerWatts : 0,
+      solarGeneratedWatts: 0,
+      feederVoltageRms: voltageVolts,
+      gridFrequencyHz: frequencyHz,
       tnebSanctionedLoadPercent,
     };
-  }, [liveStream, calculatedActiveWatts, appliances, calculateBill, userProfile.monthlyBudgetKwh, userProfile.sanctionedLoadKw]);
+  }, [liveStream, isEsp32Connected, cumulativeUnitsKwh, appliances, calculateBill, userProfile.monthlyBudgetKwh, userProfile.sanctionedLoadKw]);
 
   // Appliance Actions
   const toggleAppliance = useCallback((id: string) => {
@@ -864,6 +893,12 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         sendSerialCommand,
         clearSerialLog,
         isSerialConnected,
+        isWifiConnected,
+        isMqttConnected,
+        isEsp32Connected,
+        setWifiConnected: setIsWifiConnected,
+        setMqttConnected: setIsMqttConnected,
+        disconnectHardware,
         serialLog,
       }}
     >

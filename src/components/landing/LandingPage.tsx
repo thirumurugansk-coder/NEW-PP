@@ -28,12 +28,22 @@ import {
 } from 'lucide-react';
 import { useEnergy } from '../../context/EnergyContext';
 import { ConnectEsp32Modal } from '../esp32/ConnectEsp32Modal';
+import { VoltPulseLogo } from '../brand/VoltPulseLogo';
+import { BrandIdentityModal } from '../brand/BrandIdentityModal';
+import officialIdentityImg from '../../assets/images/voltpulse_official_identity_1788445932843.jpg';
+import officialEmblemImg from '../../assets/images/voltpulse_official_emblem_1788445955257.jpg';
+import emblemImg from '../../assets/images/voltpulse_emblem_1788443970834.jpg';
+import wordmarkImg from '../../assets/images/voltpulse_wordmark_1788443986648.jpg';
+import appIconImg from '../../assets/images/voltpulse_app_icon_1788444002184.jpg';
+import controlCenterBg from '../../assets/images/voltpulse_iot_background_1788444639285.jpg';
+import lightBackdropImg from '../../assets/images/voltpulse_light_backdrop_1788445665660.jpg';
 
 export const LandingPage: React.FC = () => {
-  const { setActiveTab, metrics, appliances, toggleAppliance, userProfile, calculateBill, isSerialConnected } = useEnergy();
+  const { setActiveTab, metrics, appliances, toggleAppliance, userProfile, calculateBill, isEsp32Connected } = useEnergy();
   const [showConnectModal, setShowConnectModal] = React.useState(false);
+  const [showBrandModal, setShowBrandModal] = React.useState(false);
 
-  const currentBillDetails = calculateBill(metrics.dailyConsumptionKwh * 60);
+  const currentBillDetails = isEsp32Connected ? calculateBill(metrics.dailyConsumptionKwh * 60) : null;
 
   const keyFeatures = [
     {
@@ -118,7 +128,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-              TNEB <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-sky-400">SmartGrid</span>: Consumer Energy Portal
+              VoltPulse <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-sky-400">IoT</span>: Smart Energy Portal
             </h1>
 
             <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
@@ -139,14 +149,14 @@ export const LandingPage: React.FC = () => {
               <button
                 onClick={() => setShowConnectModal(true)}
                 className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-all shadow-md ${
-                  isSerialConnected
+                  isEsp32Connected
                     ? 'bg-emerald-500 text-slate-950 shadow-emerald-950/40'
                     : 'border border-amber-400/50 bg-[#081b3d] text-amber-300 hover:bg-[#0c2e6b]'
                 }`}
                 id="hero-connect-esp32-btn"
               >
                 <Cpu className="h-4 w-4 text-amber-400" />
-                <span>{isSerialConnected ? 'ESP32 Linked ✓' : 'Connect ESP32 Hardware'}</span>
+                <span>{isEsp32Connected ? 'ESP32 Linked ✓' : 'Connect ESP32 Hardware'}</span>
               </button>
 
               <button
@@ -173,33 +183,41 @@ export const LandingPage: React.FC = () => {
               <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d]">
                 <div className="text-[11px] text-slate-400">Current Load</div>
                 <div className="text-xl font-bold font-mono-num text-amber-300 mt-0.5">
-                  {(metrics.currentPowerWatts / 1000).toFixed(2)} kW
+                  {isEsp32Connected ? `${(metrics.currentPowerWatts / 1000).toFixed(2)} kW` : '0.00 kW'}
                 </div>
-                <div className="text-[10px] text-slate-400">Sanctioned: {userProfile.sanctionedLoadKw} kW</div>
+                <div className="text-[10px] text-slate-400">
+                  {isEsp32Connected ? `Sanctioned: ${userProfile.sanctionedLoadKw} kW` : 'Hardware Disconnected'}
+                </div>
               </div>
 
               <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d]">
                 <div className="text-[11px] text-slate-400">Today's Usage</div>
                 <div className="text-xl font-bold font-mono-num text-slate-100 mt-0.5">
-                  {metrics.dailyConsumptionKwh} Units
+                  {isEsp32Connected ? `${metrics.dailyConsumptionKwh} Units` : '0.0 Units'}
                 </div>
-                <div className="text-[10px] text-emerald-400">Normal Range</div>
+                <div className={`text-[10px] ${isEsp32Connected ? 'text-emerald-400' : 'text-slate-500'}`}>
+                  {isEsp32Connected ? 'Live Meter Stream' : 'No Reading'}
+                </div>
               </div>
 
               <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d]">
                 <div className="text-[11px] text-slate-400">Bi-Monthly Est. Bill</div>
                 <div className="text-xl font-bold font-mono-num text-amber-300 mt-0.5">
-                  ₹{((currentBillDetails?.totalCost ?? currentBillDetails?.totalAmountPayable ?? 0)).toLocaleString('en-IN')}
+                  {isEsp32Connected && currentBillDetails ? `₹${(currentBillDetails.totalCost ?? 0).toLocaleString('en-IN')}` : '₹0.00'}
                 </div>
-                <div className="text-[10px] text-emerald-400 font-bold">100 Free Units Applied</div>
+                <div className={`text-[10px] font-bold ${isEsp32Connected ? 'text-emerald-400' : 'text-slate-500'}`}>
+                  {isEsp32Connected ? '100 Free Units Applied' : 'Awaiting ESP32 Link'}
+                </div>
               </div>
 
               <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d]">
                 <div className="text-[11px] text-slate-400">TNEB Score</div>
                 <div className="text-xl font-bold font-mono-num text-sky-300 mt-0.5">
-                  {metrics.efficiencyScore}/100
+                  {isEsp32Connected ? `${metrics.efficiencyScore}/100` : '-- / 100'}
                 </div>
-                <div className="text-[10px] text-sky-400 font-semibold">Grade A</div>
+                <div className={`text-[10px] font-semibold ${isEsp32Connected ? 'text-sky-400' : 'text-slate-500'}`}>
+                  {isEsp32Connected ? 'Grade A' : 'Sensor Offline'}
+                </div>
               </div>
             </div>
           </div>
@@ -209,9 +227,9 @@ export const LandingPage: React.FC = () => {
             <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-2xl backdrop-blur-xl relative">
               <div className="flex items-center justify-between pb-3 border-b border-[#1a365d]">
                 <div className="flex items-center gap-2">
-                  <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping" />
+                  <div className={`h-2.5 w-2.5 rounded-full ${isEsp32Connected ? 'bg-emerald-400 animate-ping' : 'bg-rose-500'}`} />
                   <span className="text-xs font-bold text-slate-200 uppercase tracking-wider">
-                    TNEB Smart Meter Live Stream
+                    {isEsp32Connected ? 'TNEB Smart Meter Live Stream' : 'ESP32 Offline (0 Watts)'}
                   </span>
                 </div>
                 <span className="rounded bg-[#030b1e] px-2 py-0.5 text-[10px] font-mono text-amber-300 border border-amber-500/30">
@@ -379,6 +397,285 @@ export const LandingPage: React.FC = () => {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* VoltPulse IoT Brand Identity & System Showcase */}
+      <section className="rounded-3xl border border-[#C5A059]/40 bg-gradient-to-b from-[#0D1520] via-[#090F17] to-[#050A10] p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#0D382B]/30 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#C5A059]/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-8">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800/80 pb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#C5A059]/50 bg-[#0D382B] px-3.5 py-1 text-xs font-bold text-[#FAF7F0] mb-3">
+                <span className="h-2 w-2 rounded-full bg-[#C5A059] animate-pulse" />
+                <span>VoltPulse IoT Brand System</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#FAF7F0] tracking-tight">
+                Engineering Identity: <span className="text-[#C5A059]">VoltPulse IoT</span>
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
+                A classic technology brand aesthetic merging utility power-meter geometry, instantaneous lightning strike,
+                continuous electrical frequency waveforms, and decentralized IoT node telemetry.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowBrandModal(true)}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#0D382B] hover:bg-[#124838] px-5 py-2.5 text-xs font-bold text-[#FAF7F0] border border-[#C5A059]/60 shadow-lg shadow-black/40 transition-all hover:scale-[1.02] self-start md:self-auto"
+            >
+              <span>View Full Brand Guidelines & Palette</span>
+              <ArrowRight className="h-4 w-4 text-[#C5A059]" />
+            </button>
+          </div>
+
+          {/* ★ Official Master Brand Identity Hero Artwork (Matching uploaded design) */}
+          <div className="rounded-2xl border-2 border-[#C59B46]/60 bg-[#090F17] p-4 sm:p-6 shadow-2xl relative overflow-hidden group">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#164430] text-xs font-bold text-[#C59B46] border border-[#C59B46]/50">
+                  ★
+                </span>
+                <h3 className="text-base sm:text-lg font-black text-slate-100">
+                  Official Master Brand Visual Identity
+                </h3>
+                <span className="rounded bg-[#C59B46] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-slate-950">
+                  Primary Spec
+                </span>
+              </div>
+              <div className="text-[11px] font-mono text-[#C59B46] flex items-center gap-2">
+                <span>16:9 Warm Ivory</span>
+                <span>•</span>
+                <span className="text-slate-300 font-bold">SMART ENERGY. REAL-TIME INSIGHT.</span>
+              </div>
+            </div>
+
+            <div className="relative rounded-xl border border-[#C59B46]/40 overflow-hidden shadow-2xl bg-[#F5EFE6]">
+              <img
+                src={officialIdentityImg}
+                alt="VoltPulse IoT Official Master Brand Visual Identity"
+                className="w-full h-auto max-h-[480px] object-contain object-center mx-auto transition-transform duration-700 group-hover:scale-[1.01]"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          </div>
+
+          {/* 3 Core Deliverables Display Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 1. Standalone Emblem */}
+            <div className="rounded-2xl border border-slate-800/90 bg-[#121824]/80 p-5 flex flex-col justify-between hover:border-[#C5A059]/50 transition-colors group">
+              <div>
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
+                  <span className="font-bold text-[#C59B46] uppercase tracking-wider">Asset 01</span>
+                  <span className="font-mono text-[11px]">1:1 Master Emblem</span>
+                </div>
+                <h3 className="text-base font-bold text-slate-100 mb-1">
+                  Standalone VoltPulse Emblem
+                </h3>
+                <p className="text-xs text-slate-400 mb-4">
+                  Integrated circular power-meter ring, subtle “V” chevron, central electrical lightning bolt, and IoT node terminals.
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center justify-center rounded-xl bg-[#F5EFE6] p-6 border border-[#C59B46]/40 min-h-[220px]">
+                <img
+                  src={officialEmblemImg}
+                  alt="VoltPulse IoT Master Emblem"
+                  className="h-36 w-36 object-contain transition-transform group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                <span className="mt-3 text-[11px] font-mono font-bold text-[#164430]">
+                  Official Warm Ivory Lockup
+                </span>
+              </div>
+            </div>
+
+            {/* 2. Wordmark Logo */}
+            <div className="rounded-2xl border border-slate-800/90 bg-[#121824]/80 p-5 flex flex-col justify-between hover:border-[#C5A059]/50 transition-colors group">
+              <div>
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
+                  <span className="font-bold text-[#C5A059] uppercase tracking-wider">Asset 02</span>
+                  <span className="font-mono text-[11px]">Horizontal Lockup</span>
+                </div>
+                <h3 className="text-base font-bold text-slate-100 mb-1">
+                  Icon + “VoltPulse IoT” Wordmark
+                </h3>
+                <p className="text-xs text-slate-400 mb-4">
+                  Master emblem paired with modern technical sans-serif typography in charcoal black and muted metallic gold.
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAF7F0] p-6 border border-[#C5A059]/30 min-h-[220px]">
+                <img
+                  src={wordmarkImg}
+                  alt="VoltPulse IoT Wordmark"
+                  className="w-full h-auto max-h-28 object-contain transition-transform group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                <span className="mt-3 text-[11px] font-mono font-bold text-[#14181E]">
+                  Corporate Engineering Lockup
+                </span>
+              </div>
+            </div>
+
+            {/* 3. Square App Icon */}
+            <div className="rounded-2xl border border-slate-800/90 bg-[#121824]/80 p-5 flex flex-col justify-between hover:border-[#C5A059]/50 transition-colors group">
+              <div>
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
+                  <span className="font-bold text-[#C5A059] uppercase tracking-wider">Asset 03</span>
+                  <span className="font-mono text-[11px]">Square App Icon</span>
+                </div>
+                <h3 className="text-base font-bold text-slate-100 mb-1">
+                  Mobile & PWA App Launcher
+                </h3>
+                <p className="text-xs text-slate-400 mb-4">
+                  High-contrast Deep Forest Green squircle with metallic gold rim for iOS, Android, and browser favicons.
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center justify-center rounded-xl bg-[#14181E] p-6 border border-slate-800 min-h-[220px]">
+                <img
+                  src={appIconImg}
+                  alt="VoltPulse IoT Square App Icon"
+                  className="h-32 w-32 object-contain rounded-2xl shadow-xl border border-[#C5A059]/40 transition-transform group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                <span className="mt-3 text-[11px] font-mono font-bold text-slate-300">
+                  Squircle App Icon Version
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Master 16:9 Backdrops Showcase (Dark Control Center & Light Visual Identity) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Asset 04: Industrial Dark Control Center Canvas */}
+            <div className="rounded-2xl border border-[#C5A059]/40 bg-[#121824]/90 p-5 overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-[#C5A059] uppercase tracking-wider text-xs">Asset 04</span>
+                    <h3 className="text-base font-bold text-slate-100">
+                      Industrial IoT Control Center (16:9 Dark)
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-mono text-[#C5A059] bg-[#0D382B] px-2 py-0.5 rounded border border-[#C5A059]/40">
+                    Control Center
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mb-4">
+                  Charcoal & Deep Forest Green substrate with faint PCB traces, power-grid lines, and generous dark negative space.
+                </p>
+              </div>
+
+              <div className="relative rounded-xl border border-white/10 overflow-hidden shadow-2xl h-52 sm:h-64">
+                <img
+                  src={controlCenterBg}
+                  alt="VoltPulse IoT Industrial Control Center Background"
+                  className="w-full h-full object-cover object-center"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#090F17]/95 via-transparent to-black/20 flex items-end p-3 sm:p-4">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="rounded bg-[#0D382B] px-2 py-0.5 text-[10px] font-bold text-[#FAF7F0] border border-[#C5A059]/50">
+                      50 Hz Waveforms
+                    </span>
+                    <span className="rounded bg-[#14181E] px-2 py-0.5 text-[10px] font-bold text-[#C5A059] border border-white/10">
+                      Circuit Traces
+                    </span>
+                    <span className="rounded bg-[#14181E] px-2 py-0.5 text-[10px] font-bold text-slate-300 border border-white/10">
+                      IoT Nodes
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Asset 05: Warm Ivory Light Visual Identity Backdrop */}
+            <div className="rounded-2xl border border-[#C5A059]/40 bg-[#121824]/90 p-5 overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-[#C5A059] uppercase tracking-wider text-xs">Asset 05</span>
+                    <h3 className="text-base font-bold text-slate-100">
+                      Light Visual Identity Backdrop (16:9 Ivory)
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-mono text-[#0D382B] bg-[#FAF7F0] px-2 py-0.5 rounded border border-[#C5A059]/60 font-bold">
+                    Logo Identity
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mb-4">
+                  Warm ivory engineering canvas with flowing pulse curves, blueprint geometry, and central clearing for logo focus.
+                </p>
+              </div>
+
+              <div className="relative rounded-xl border border-[#C5A059]/40 overflow-hidden shadow-2xl h-52 sm:h-64 bg-[#FAF7F0] group">
+                <img
+                  src={lightBackdropImg}
+                  alt="VoltPulse IoT Light Visual Identity Backdrop"
+                  className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                {/* Centered Logo Preview Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center p-3">
+                  <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/80 backdrop-blur-sm border border-[#C5A059]/40 shadow-lg">
+                    <VoltPulseLogo variant="icon" size={38} theme="ivory" />
+                    <div>
+                      <div className="flex items-center gap-1.5 leading-none">
+                        <span className="text-base font-black text-[#14181E]">Volt<span className="text-[#C5A059]">Pulse</span></span>
+                        <span className="text-[10px] bg-[#0D382B] text-[#FAF7F0] font-bold px-1.5 py-0.5 rounded">IoT</span>
+                      </div>
+                      <span className="text-[9px] text-slate-600 uppercase tracking-wider font-semibold">Engineering Identity</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#14181E]/70 to-transparent p-3 flex items-center justify-between">
+                  <span className="text-[10px] text-[#FAF7F0] font-bold">Splash Screen • Hero • Presentation Decks</span>
+                  <button
+                    onClick={() => setShowBrandModal(true)}
+                    className="text-[10px] font-bold text-[#C5A059] hover:underline flex items-center gap-0.5"
+                  >
+                    <span>Inspect</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Color Palette Strip */}
+          <div className="rounded-2xl border border-slate-800/80 bg-[#14181E]/60 p-4 sm:p-5">
+            <div className="text-xs font-bold text-slate-300 mb-3 uppercase tracking-wider flex items-center justify-between">
+              <span>Brand Color Palette System</span>
+              <span className="text-[11px] text-[#C5A059] font-mono">Deep Forest Green • Charcoal • Warm Ivory • Metallic Gold</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="rounded-xl border border-white/10 bg-[#0D382B] p-3 text-white">
+                <div className="text-[10px] uppercase font-bold text-emerald-300">Primary Tone</div>
+                <div className="text-xs font-bold mt-0.5">Deep Forest Green</div>
+                <div className="text-[11px] font-mono text-emerald-200/80 mt-1">#0D382B</div>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-[#14181E] p-3 text-white">
+                <div className="text-[10px] uppercase font-bold text-slate-400">Chassis & Text</div>
+                <div className="text-xs font-bold mt-0.5">Charcoal Black</div>
+                <div className="text-[11px] font-mono text-slate-400 mt-1">#14181E</div>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-[#FAF7F0] p-3 text-slate-900">
+                <div className="text-[10px] uppercase font-bold text-slate-600">Canvas & Contrast</div>
+                <div className="text-xs font-bold mt-0.5">Warm Ivory</div>
+                <div className="text-[11px] font-mono text-slate-700 mt-1">#FAF7F0</div>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-[#C5A059] p-3 text-amber-950">
+                <div className="text-[10px] uppercase font-bold text-amber-900">Metallic Accent</div>
+                <div className="text-xs font-bold mt-0.5">Muted Gold</div>
+                <div className="text-[11px] font-mono text-amber-900 mt-1">#C5A059</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -44,6 +44,12 @@ export const Esp32Integration: React.FC = () => {
     sendSerialCommand,
     clearSerialLog,
     isSerialConnected,
+    isWifiConnected,
+    isMqttConnected,
+    isEsp32Connected,
+    setWifiConnected,
+    setMqttConnected,
+    disconnectHardware,
     serialLog,
     injectLiveTelemetry,
     isLiveStreaming,
@@ -131,11 +137,7 @@ export const Esp32Integration: React.FC = () => {
         setWsLog((prev) => [`[${new Date().toLocaleTimeString()}] TX Error: ${err.message}`, ...prev]);
       }
     } else {
-      // Simulate command sent in local ADC mode
-      injectLiveTelemetry({
-        powerWatts: Math.round(metrics.currentPowerWatts * (cmd.includes('OFF') ? 0.4 : 1.1)),
-      });
-      alert(`Command dispatched: ${cmd} (Connect ESP32 via USB or WebSocket for physical hardware response)`);
+      alert(`ESP32 hardware is not connected. Connect via USB Web Serial, WiFi WebSocket, or MQTT to dispatch commands.`);
     }
   };
 
@@ -146,6 +148,7 @@ export const Esp32Integration: React.FC = () => {
         wsRef.current.close();
       }
       setWsStatus('disconnected');
+      setWifiConnected(false);
       setWsLog((prev) => [`[${new Date().toLocaleTimeString()}] WebSocket Disconnected by user.`, ...prev]);
       return;
     }
@@ -160,6 +163,7 @@ export const Esp32Integration: React.FC = () => {
 
       ws.onopen = () => {
         setWsStatus('connected');
+        setWifiConnected(true);
         setDataSourceMode('rest_webhook');
         setWsLog((prev) => [
           `[${new Date().toLocaleTimeString()}] Connected to ESP32 AsyncWebSocket @ ${wsUrl}!`,
@@ -186,6 +190,7 @@ export const Esp32Integration: React.FC = () => {
 
       ws.onerror = (err) => {
         setWsStatus('error');
+        setWifiConnected(false);
         setWsLog((prev) => [
           `[${new Date().toLocaleTimeString()}] WebSocket Error: Connection refused or timed out. Check IP ${esp32Ip}.`,
           ...prev,
@@ -194,10 +199,12 @@ export const Esp32Integration: React.FC = () => {
 
       ws.onclose = () => {
         setWsStatus('disconnected');
+        setWifiConnected(false);
         setWsLog((prev) => [`[${new Date().toLocaleTimeString()}] WebSocket Connection Closed.`, ...prev]);
       };
     } catch (err: any) {
       setWsStatus('error');
+      setWifiConnected(false);
       setWsLog((prev) => [`[${new Date().toLocaleTimeString()}] Failed to initiate WebSocket: ${err.message}`, ...prev]);
     }
   };
@@ -604,13 +611,13 @@ void loop() {
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3">
                 <span
-                  className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${
-                    isSerialConnected || wsStatus === 'connected' ? 'bg-emerald-400' : 'bg-amber-400'
+                  className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                    isEsp32Connected ? 'bg-emerald-400 animate-ping' : 'bg-rose-400'
                   }`}
                 />
                 <span
                   className={`relative inline-flex h-3 w-3 rounded-full ${
-                    isSerialConnected || wsStatus === 'connected' ? 'bg-emerald-500' : 'bg-amber-400'
+                    isEsp32Connected ? 'bg-emerald-500' : 'bg-rose-400'
                   }`}
                 />
               </span>
@@ -618,25 +625,35 @@ void loop() {
                 <div className="text-xs font-bold text-white">
                   {isSerialConnected
                     ? 'USB Serial Connected'
-                    : wsStatus === 'connected'
+                    : isWifiConnected
                     ? 'WiFi WebSocket Online'
-                    : 'Substation ADC Active'}
+                    : isMqttConnected
+                    ? 'MQTT SCADA Online'
+                    : 'ESP32 Disconnected (No Telemetry)'}
                 </div>
                 <div className="text-[10px] text-slate-400 font-mono">
-                  {isSerialConnected ? `@ ${baudRate} Baud` : wsStatus === 'connected' ? esp32Ip : 'Demo Mode Telemetry'}
+                  {isEsp32Connected
+                    ? `Active: ${metrics.voltageVolts}V | ${metrics.currentAmps}A | ${metrics.currentPowerWatts}W`
+                    : 'Real-time telemetry held at 0 W (No fake values)'}
                 </div>
               </div>
             </div>
 
             <button
-              onClick={handleToggleSerial}
+              onClick={() => {
+                if (isEsp32Connected) {
+                  disconnectHardware();
+                } else {
+                  handleToggleSerial();
+                }
+              }}
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
-                isSerialConnected
+                isEsp32Connected
                   ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30'
                   : 'bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 shadow-md'
               }`}
             >
-              {isSerialConnected ? 'Disconnect USB' : 'Connect USB Serial'}
+              {isEsp32Connected ? 'Disconnect ESP32' : 'Connect USB Serial'}
             </button>
           </div>
         </div>

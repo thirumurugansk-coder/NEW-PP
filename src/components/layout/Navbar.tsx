@@ -30,6 +30,8 @@ import {
 import { useEnergy } from '../../context/EnergyContext';
 import { ThemeMode } from '../../types';
 import { ConnectEsp32Modal } from '../esp32/ConnectEsp32Modal';
+import { VoltPulseLogo } from '../brand/VoltPulseLogo';
+import { BrandIdentityModal } from '../brand/BrandIdentityModal';
 
 export const Navbar: React.FC = () => {
   const {
@@ -49,6 +51,7 @@ export const Navbar: React.FC = () => {
     connectWebSerial,
     disconnectWebSerial,
     isSerialConnected,
+    isEsp32Connected,
     iotConfig,
     userProfile,
   } = useEnergy();
@@ -57,6 +60,7 @@ export const Navbar: React.FC = () => {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
+  const [showBrandModal, setShowBrandModal] = useState(false);
 
   const activeAlertsCount = alerts.filter((a) => a.status === 'active').length;
 
@@ -104,29 +108,39 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setActiveTab('home')}
-            className="group flex items-center gap-2.5 text-left focus:outline-none"
+            className="group flex items-center gap-3 text-left focus:outline-none"
             id="tneb-brand-logo-btn"
           >
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 via-sky-500 to-blue-700 shadow-md shadow-sky-900/40 transition-transform group-hover:scale-105 border border-amber-300/40">
-              <Zap className="h-5 w-5 text-white stroke-[2.5]" />
+            <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-[#0D382B] border border-[#C5A059]/60 shadow-md shadow-black/40 transition-transform group-hover:scale-105">
+              <VoltPulseLogo variant="icon" size={34} />
               <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-300"></span>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C5A059] opacity-75"></span>
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#C5A059]"></span>
               </span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-black tracking-tight text-white">
-                  TNEB <span className="text-sky-400">SmartGrid</span>
+                <span className="text-lg font-black tracking-tight text-[#FAF7F0]">
+                  Volt<span className="text-[#C59B46]">Pulse</span>
                 </span>
-                <span className="rounded bg-gradient-to-r from-amber-500/20 to-sky-500/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300 border border-amber-400/30">
-                  TANGEDCO
+                <span className="rounded bg-[#164430] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#FAF7F0] border border-[#C59B46]/60">
+                  IoT
                 </span>
               </div>
-              <p className="text-[11px] text-slate-300 hidden sm:block font-medium">
-                Official Consumer AMI Smart Metering System
+              <p className="text-[10px] text-[#C59B46] tracking-[0.16em] uppercase hidden sm:block font-bold">
+                SMART ENERGY. REAL-TIME INSIGHT.
               </p>
             </div>
+          </button>
+
+          {/* Quick Brand Assets trigger */}
+          <button
+            onClick={() => setShowBrandModal(true)}
+            className="hidden lg:flex items-center gap-1.5 rounded-full bg-[#0D382B]/80 px-2.5 py-1 text-[10px] font-bold text-[#FAF7F0] border border-[#C5A059]/40 hover:bg-[#124838] transition-colors"
+            title="Inspect Official VoltPulse IoT Brand Identity, Vector Symbols & Palette"
+          >
+            <Sparkles className="h-3 w-3 text-[#C5A059]" />
+            <span>Brand Assets</span>
           </button>
         </div>
 
@@ -134,11 +148,15 @@ export const Navbar: React.FC = () => {
         <div className="hidden md:flex items-center gap-2.5 rounded-full border border-[#1a365d] bg-[#071738]/90 px-4 py-1.5 shadow-inner">
           <div className="flex items-center gap-1.5">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+              <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                isEsp32Connected ? 'bg-emerald-400 animate-ping' : 'bg-rose-400'
+              }`}></span>
+              <span className={`relative inline-flex h-2 w-2 rounded-full ${
+                isEsp32Connected ? 'bg-emerald-400' : 'bg-rose-400'
+              }`}></span>
             </span>
-            <span className="text-xs font-semibold text-emerald-300">
-              {iotConfig.connectionStatus === 'connected' ? 'Guindy SS Live' : 'Reconnecting'}
+            <span className={`text-xs font-semibold ${isEsp32Connected ? 'text-emerald-300' : 'text-rose-300'}`}>
+              {isEsp32Connected ? 'ESP32 Live Telemetry' : 'ESP32 Disconnected'}
             </span>
           </div>
           <span className="text-slate-600">|</span>
@@ -156,7 +174,7 @@ export const Navbar: React.FC = () => {
               PF: {metrics.powerFactor}
             </span>
             <span className="text-slate-400 hidden xl:inline">
-              50.0 Hz Grid
+              {metrics.frequencyHz} Hz
             </span>
           </div>
         </div>
@@ -167,7 +185,7 @@ export const Navbar: React.FC = () => {
           <button
             onClick={() => setShowConnectModal(true)}
             className={`flex items-center gap-1.5 rounded-lg px-2.5 sm:px-3 py-1.5 text-xs font-black transition-all shadow-md ${
-              isSerialConnected
+              isEsp32Connected
                 ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-950/40'
                 : 'bg-gradient-to-r from-amber-400 to-sky-500 hover:opacity-95 text-slate-950'
             }`}
@@ -177,14 +195,14 @@ export const Navbar: React.FC = () => {
             <span className="relative flex h-2 w-2">
               <span
                 className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                  isSerialConnected ? 'bg-slate-950 animate-ping' : 'bg-slate-950'
+                  isEsp32Connected ? 'bg-slate-950 animate-ping' : 'bg-slate-950'
                 }`}
               />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-950" />
             </span>
             <Cpu className="h-3.5 w-3.5" />
             <span className="font-mono">
-              {isSerialConnected ? 'ESP32 Live' : 'Connect ESP32'}
+              {isEsp32Connected ? 'ESP32 Live' : 'Connect ESP32'}
             </span>
           </button>
 
@@ -411,6 +429,12 @@ export const Navbar: React.FC = () => {
       <ConnectEsp32Modal
         isOpen={showConnectModal}
         onClose={() => setShowConnectModal(false)}
+      />
+
+      {/* Official Brand Identity Showcase Modal */}
+      <BrandIdentityModal
+        isOpen={showBrandModal}
+        onClose={() => setShowBrandModal(false)}
       />
     </header>
   );
