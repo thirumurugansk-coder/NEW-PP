@@ -89,60 +89,61 @@ export const VoltPulseLogo: React.FC<VoltPulseLogoProps> = ({
 
       <g transform={badgeMode ? 'scale(0.88) translate(9.5, 9.5)' : ''}>
         {/* 1. TOP-LEFT TO BOTTOM: Deep Forest Green Outer Arc with IoT Terminal Dot */}
-        {/* Terminal IoT Dot at the top-left */}
+        {/* Terminal IoT Dot at ~10:30 position */}
         <circle
-          cx="44"
-          cy="25"
-          r="4.5"
+          cx="40"
+          cy="32"
+          r="4.2"
           fill={badgeMode ? '#FAF7F0' : forestGreen}
         />
 
-        {/* Forest green circular stroke starting from the dot and curving around the left */}
+        {/* Forest green circular stroke starting from the dot and curving around the left to Wi-Fi base */}
         <path
-          d="M 44 25 A 48 48 0 0 0 66 117"
+          d="M 40 32 A 48 48 0 0 0 62 117"
           fill="none"
           stroke={badgeMode ? '#FAF7F0' : forestGreen}
-          strokeWidth="5"
+          strokeWidth="4.8"
           strokeLinecap="round"
         />
 
         {/* 2. TOP-RIGHT: Metallic Gold Meter Arc & Graduation Calibration Ticks */}
-        {/* Outer gold arc from 12 o'clock to 4 o'clock */}
+        {/* Outer gold arc from 12:15 to ~4:15 */}
         <path
-          d="M 70 22 A 48 48 0 0 1 113 86"
+          d="M 74 22.5 A 48 48 0 0 1 114 85"
           fill="none"
           stroke="url(#vp-official-gold)"
-          strokeWidth="5"
+          strokeWidth="4.8"
           strokeLinecap="round"
         />
 
-        {/* Radial meter graduation tick marks pointing inward */}
-        {/* Tick 1 (around 73° from vertical) */}
-        <line x1="77" y1="28" x2="81" y2="35" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="84" y1="32" x2="87" y2="39" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="91" y1="37" x2="93" y2="44" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="97" y1="43" x2="98" y2="50" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="102" y1="50" x2="102" y2="57" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="106" y1="58" x2="104" y2="65" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="109" y1="67" x2="105" y2="73" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="110" y1="76" x2="105" y2="81" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="109" y1="85" x2="104" y2="89" stroke="url(#vp-official-gold)" strokeWidth="2.4" strokeLinecap="round" />
+        {/* Radial meter graduation tick marks pointing inward with mathematical precision */}
+        <line x1="81.6" y1="26.5" x2="79.8" y2="33.3" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="86.1" y1="28.0" x2="83.6" y2="34.5" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="90.4" y1="29.9" x2="87.2" y2="36.1" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="94.5" y1="32.3" x2="90.7" y2="38.1" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="98.3" y1="35.0" x2="93.9" y2="40.5" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="101.8" y1="38.2" x2="96.9" y2="43.1" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="105.0" y1="41.7" x2="99.5" y2="46.1" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="107.7" y1="45.5" x2="101.9" y2="49.3" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="110.1" y1="49.6" x2="103.9" y2="52.8" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="112.0" y1="53.9" x2="105.5" y2="56.4" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="113.5" y1="58.3" x2="106.7" y2="60.2" stroke="url(#vp-official-gold)" strokeWidth="2.2" strokeLinecap="round" />
 
         {/* 3. BOTTOM CENTER: Wi-Fi / Wireless Transmission Icon */}
-        <g transform="translate(70, 114)">
-          {/* Base dot */}
-          <circle cx="0" cy="0" r="3.2" fill={metallicGold} />
-          {/* Wave 1 */}
+        <g>
+          {/* Base dot at bottom */}
+          <circle cx="70" cy="116" r="3.2" fill={metallicGold} />
+          {/* Wave 1 (inner) */}
           <path
-            d="M -7 -6 A 9 9 0 0 1 7 -6"
+            d="M 63.5 110 A 7.5 7.5 0 0 1 76.5 110"
             fill="none"
             stroke={metallicGold}
             strokeWidth="2.6"
             strokeLinecap="round"
           />
-          {/* Wave 2 */}
+          {/* Wave 2 (outer) */}
           <path
-            d="M -13 -13 A 17 17 0 0 1 13 -13"
+            d="M 57.5 104 A 14.5 14.5 0 0 1 82.5 104"
             fill="none"
             stroke={metallicGold}
             strokeWidth="2.8"
@@ -152,23 +153,23 @@ export const VoltPulseLogo: React.FC<VoltPulseLogoProps> = ({
 
         {/* 4. CORE: Bold Classical Serif Letter "V" in Deep Forest Green */}
         <g fill={badgeMode ? '#FAF7F0' : forestGreen}>
-          {/* Left Serif top bracket */}
+          {/* Left Serif top bracket and descending stroke to bottom apex */}
           <path
-            d="M 33 34 L 49 34 C 47 37 46 39 46 43 L 64 100 L 73 70 L 67 48 L 73 34 L 84 34 L 75 58 L 65 108 L 57 108 L 38 46 C 36 40 34 37 33 34 Z"
+            d="M 33 34 L 50 34 C 47.5 37.5 46.5 40 47 43.5 L 65.5 107 L 73.5 72 L 67 49 L 73 34 L 83 34 L 75 58 L 66 109 L 58 109 L 38 46 C 36 40 34 37 33 34 Z"
           />
         </g>
 
-        {/* 5. CORE: Metallic Gold Electrical Lightning Bolt */}
+        {/* 5. CORE: Sharp Metallic Gold Electrical Lightning Bolt */}
         <path
-          d="M 83 17 L 63 60 L 76 58 L 69 98 L 92 50 L 78 52 Z"
+          d="M 74 17 L 64 56 L 76 54 L 68 97 L 90 48 L 78 50 Z"
           fill="url(#vp-official-gold)"
           stroke={badgeMode ? forestGreenDark : '#FAF7F0'}
           strokeWidth="0.8"
         />
 
-        {/* 6. CORE: Deep Forest Green Pulse Waveform (breaking through right border) */}
+        {/* 6. CORE: Deep Forest Green Pulse Waveform (crosses and breaches outside the right perimeter) */}
         <path
-          d="M 76 68 L 84 68 L 87 56 L 93 84 L 98 48 L 102 74 L 106 68 L 126 68"
+          d="M 75 65 L 82 65 L 86 73 L 91 46 L 96 86 L 100 55 L 104 65 L 128 65"
           fill="none"
           stroke={badgeMode ? '#FAF7F0' : forestGreen}
           strokeWidth="4"
@@ -234,20 +235,20 @@ export const VoltPulseLogo: React.FC<VoltPulseLogoProps> = ({
         </div>
 
         {/* Centered Rule: —— IoT —— */}
-        <div className="flex items-center justify-center gap-3 w-48 my-1">
-          <div className="h-[1.5px] flex-1 bg-gradient-to-r from-transparent via-[#C59B46] to-[#C59B46]" />
+        <div className="flex items-center justify-center gap-3 w-full max-w-[280px] my-1.5">
+          <div className="h-[1.5px] flex-1 bg-[#C59B46]" />
           <span
-            className="text-sm font-bold tracking-[0.25em]"
+            className="text-sm sm:text-base font-bold tracking-[0.28em]"
             style={{ color: theme === 'ivory' ? forestGreen : '#FAF7F0' }}
           >
             IoT
           </span>
-          <div className="h-[1.5px] flex-1 bg-gradient-to-l from-transparent via-[#C59B46] to-[#C59B46]" />
+          <div className="h-[1.5px] flex-1 bg-[#C59B46]" />
         </div>
 
         {/* Tagline */}
         <div
-          className="text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase mt-1"
+          className="text-[10px] sm:text-xs font-bold tracking-[0.24em] uppercase mt-1"
           style={{ color: theme === 'ivory' ? forestGreen : '#C59B46' }}
         >
           SMART ENERGY. REAL-TIME INSIGHT.

@@ -90,11 +90,10 @@ export const ProfileAndHardware: React.FC = () => {
         billable_units: Math.max(0, Number((metrics.biMonthlyUnitsKwh - 100).toFixed(2))),
       },
       meter_diagnostics: {
-        tamper_status: "NORMAL_SEALED",
-        cellular_signal_csq: 24,
-        mcu_temp_c: 39.8,
+        connection_status: isSerialConnected ? "CONNECTED_STREAMING" : "OFFLINE_STANDBY",
         crc_status: livePacketStats.crcStatus,
         total_packets: livePacketStats.totalPackets,
+        last_packet: livePacketStats.lastPacketIso || "None",
       },
     },
     null,
@@ -104,26 +103,28 @@ export const ProfileAndHardware: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl border border-[#1a365d] bg-gradient-to-r from-[#081b3d] via-[#09224f] to-[#040e24] p-5 shadow-lg">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl border-2 border-[#C59B46]/40 bg-white p-5 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-black text-white flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-amber-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#164430] text-[#FAF7F0] font-black shadow-md border border-[#C59B46]/40">
+              <Building2 className="h-5 w-5 text-[#C59B46]" />
+            </div>
+            <h2 className="text-lg font-black text-[#164430] flex items-center gap-2">
               <span>TNEB Consumer Service Profile & AMI Smart Meter Specs</span>
             </h2>
-            <span className="rounded bg-sky-500/20 px-2 py-0.5 text-[10px] font-bold text-sky-300 border border-sky-500/30">
+            <span className="rounded bg-[#FAF7F0] px-2 py-0.5 text-[10px] font-bold text-[#164430] border border-[#C59B46]/40 font-mono">
               TANGEDCO Official LT 1A
             </span>
           </div>
-          <p className="text-xs text-slate-300 mt-1">
+          <p className="text-xs text-slate-600 mt-1">
             Consumer service connection credentials, Sanctioned Load limits, and DLMS/COSEM Smart Meter IoT Telemetry
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl bg-[#030b1e] px-3.5 py-1.5 border border-[#1a365d]">
-            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-mono text-emerald-300 font-bold">
+          <div className="flex items-center gap-2 rounded-xl bg-[#FAF7F0] px-3.5 py-1.5 border border-[#C59B46]/30 shadow-xs">
+            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-600 animate-pulse" />
+            <span className="text-xs font-mono text-[#164430] font-bold">
               {userProfile.consumerNumber} (Active)
             </span>
           </div>
@@ -135,19 +136,19 @@ export const ProfileAndHardware: React.FC = () => {
         {/* Left 6 Cols: TNEB Smart Meter Hardware & MQTT Spec */}
         <div className="lg:col-span-6 space-y-6">
           {/* Real-time Hardware Bridge & Physical Serial Ingestion */}
-          <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Cpu className="h-4 w-4 text-sky-400" />
+          <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+              <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                <Cpu className="h-4 w-4 text-[#C59B46]" />
                 <span>Live Data Source & Physical Hardware Bridge</span>
               </h3>
-              <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-mono text-emerald-300 border border-emerald-500/40">
+              <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-mono text-emerald-800 border border-emerald-300 font-bold">
                 Active: {dataSourceMode.toUpperCase()}
               </span>
             </div>
 
             <div className="space-y-3">
-              <label className="block text-xs font-semibold text-slate-300">
+              <label className="block text-xs font-semibold text-slate-700">
                 Select Telemetry Ingestion Mode:
               </label>
               <div className="grid grid-cols-2 gap-2 text-xs font-mono">
@@ -156,12 +157,12 @@ export const ProfileAndHardware: React.FC = () => {
                   onClick={() => setDataSourceMode('smart_meter_adc')}
                   className={`rounded-xl border p-2.5 text-left transition-all ${
                     dataSourceMode === 'smart_meter_adc'
-                      ? 'border-sky-500 bg-sky-500/20 text-white'
-                      : 'border-[#1a365d] bg-[#030b1e] text-slate-400 hover:text-white'
+                      ? 'border-[#C59B46] bg-[#FAF7F0] text-[#164430] shadow-xs'
+                      : 'border-slate-200 bg-white text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <div className="font-bold text-sky-300">Smart Meter ADC</div>
-                  <div className="text-[10px] font-sans text-slate-400">High-Precision CT/PT Sensor Stream</div>
+                  <div className="font-bold text-[#164430]">Smart Meter ADC</div>
+                  <div className="text-[10px] font-sans text-slate-500">High-Precision CT/PT Sensor Stream</div>
                 </button>
 
                 <button
@@ -169,12 +170,12 @@ export const ProfileAndHardware: React.FC = () => {
                   onClick={() => setDataSourceMode('web_serial')}
                   className={`rounded-xl border p-2.5 text-left transition-all ${
                     dataSourceMode === 'web_serial'
-                      ? 'border-emerald-500 bg-emerald-500/20 text-white'
-                      : 'border-[#1a365d] bg-[#030b1e] text-slate-400 hover:text-white'
+                      ? 'border-[#C59B46] bg-[#FAF7F0] text-[#164430] shadow-xs'
+                      : 'border-slate-200 bg-white text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <div className="font-bold text-emerald-300">Web Serial (USB/UART)</div>
-                  <div className="text-[10px] font-sans text-slate-400">ESP32 / PZEM-004T / Arduino</div>
+                  <div className="font-bold text-emerald-700">Web Serial (USB/UART)</div>
+                  <div className="text-[10px] font-sans text-slate-500">ESP32 / PZEM-004T / Arduino</div>
                 </button>
 
                 <button
@@ -182,12 +183,12 @@ export const ProfileAndHardware: React.FC = () => {
                   onClick={() => setDataSourceMode('mqtt')}
                   className={`rounded-xl border p-2.5 text-left transition-all ${
                     dataSourceMode === 'mqtt'
-                      ? 'border-amber-500 bg-amber-500/20 text-white'
-                      : 'border-[#1a365d] bg-[#030b1e] text-slate-400 hover:text-white'
+                      ? 'border-[#C59B46] bg-[#FAF7F0] text-[#164430] shadow-xs'
+                      : 'border-slate-200 bg-white text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <div className="font-bold text-amber-300">MQTT Broker Bridge</div>
-                  <div className="text-[10px] font-sans text-slate-400">TNEB Headend SCADA Broker</div>
+                  <div className="font-bold text-[#C59B46]">MQTT Broker Bridge</div>
+                  <div className="text-[10px] font-sans text-slate-500">TNEB Headend SCADA Broker</div>
                 </button>
 
                 <button
@@ -195,27 +196,27 @@ export const ProfileAndHardware: React.FC = () => {
                   onClick={() => setDataSourceMode('rest_api')}
                   className={`rounded-xl border p-2.5 text-left transition-all ${
                     dataSourceMode === 'rest_api'
-                      ? 'border-purple-500 bg-purple-500/20 text-white'
-                      : 'border-[#1a365d] bg-[#030b1e] text-slate-400 hover:text-white'
+                      ? 'border-[#C59B46] bg-[#FAF7F0] text-[#164430] shadow-xs'
+                      : 'border-slate-200 bg-white text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <div className="font-bold text-purple-300">REST API Pull</div>
-                  <div className="text-[10px] font-sans text-slate-400">TANGEDCO Gateway HTTP Polling</div>
+                  <div className="font-bold text-slate-800">REST API Pull</div>
+                  <div className="text-[10px] font-sans text-slate-500">TANGEDCO Gateway HTTP Polling</div>
                 </button>
               </div>
 
               {/* Physical Web Serial USB Port Controller */}
-              <div className="rounded-xl border border-[#1a365d] bg-[#030b1e] p-3 text-xs space-y-2">
+              <div className="rounded-xl border border-[#C59B46]/20 bg-[#FAF7F0] p-3 text-xs space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                    <Radio className="h-3.5 w-3.5 text-emerald-400" />
+                  <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <Radio className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Physical USB Serial Port (Baud: 115200)</span>
                   </span>
                   <span
                     className={`rounded px-2 py-0.5 text-[10px] font-mono font-bold ${
                       isSerialConnected
-                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                        : 'bg-slate-800 text-slate-400'
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        : 'bg-slate-200 text-slate-600'
                     }`}
                   >
                     {isSerialConnected ? 'CONNECTED' : 'DISCONNECTED'}
@@ -227,7 +228,7 @@ export const ProfileAndHardware: React.FC = () => {
                     <button
                       type="button"
                       onClick={connectWebSerial}
-                      className="flex-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 p-2 text-xs font-bold text-slate-950 shadow transition-all"
+                      className="flex-1 rounded-xl bg-[#164430] hover:bg-[#1e583e] p-2 text-xs font-bold text-[#FAF7F0] shadow-sm transition-all"
                       id="connect-serial-btn"
                     >
                       Connect USB / ESP32 Device
@@ -236,7 +237,7 @@ export const ProfileAndHardware: React.FC = () => {
                     <button
                       type="button"
                       onClick={disconnectWebSerial}
-                      className="flex-1 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 p-2 text-xs font-bold transition-all"
+                      className="flex-1 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 p-2 text-xs font-bold transition-all"
                       id="disconnect-serial-btn"
                     >
                       Disconnect Port
@@ -245,7 +246,7 @@ export const ProfileAndHardware: React.FC = () => {
                 </div>
 
                 {serialLog.length > 0 && (
-                  <div className="rounded-lg bg-[#040e24] p-2 text-[10px] font-mono text-slate-300 max-h-24 overflow-y-auto space-y-0.5 border border-[#1a365d]">
+                  <div className="rounded-lg bg-[#0c1a14] p-2 text-[10px] font-mono text-emerald-400 max-h-24 overflow-y-auto space-y-0.5 border border-[#C59B46]/30">
                     {serialLog.map((log, idx) => (
                       <div key={idx} className="leading-tight">{log}</div>
                     ))}
@@ -255,29 +256,29 @@ export const ProfileAndHardware: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveTab('esp32')}
-                  className="w-full flex items-center justify-between rounded-xl border border-amber-400/40 bg-gradient-to-r from-amber-400/10 via-sky-500/10 to-transparent p-2.5 text-xs text-amber-300 hover:bg-amber-400/20 transition-all font-bold"
+                  className="w-full flex items-center justify-between rounded-xl border border-[#C59B46]/40 bg-white p-2.5 text-xs text-[#164430] hover:bg-[#FAF7F0] transition-all font-bold shadow-xs"
                 >
                   <span className="flex items-center gap-1.5">
-                    <Radio className="h-4 w-4 text-amber-400" />
+                    <Radio className="h-4 w-4 text-[#C59B46]" />
                     <span>Open Dedicated ESP32 Hardware Console & Firmware Flasher</span>
                   </span>
-                  <span>➔</span>
+                  <span className="text-[#C59B46]">➔</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* MQTT Telemetry Payload Terminal Box */}
-          <div className="rounded-2xl border border-[#1a365d] bg-[#030b1e] p-5 shadow-sm space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                <Terminal className="h-4 w-4 text-amber-400" />
+          <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+                <Terminal className="h-4 w-4 text-[#C59B46]" />
                 <span>Live TNEB Smart Meter SCADA Packet (JSON)</span>
               </div>
-              <span className="text-[10px] text-amber-300 font-mono">TANGEDCO Secure</span>
+              <span className="text-[10px] text-[#164430] font-mono font-bold">TANGEDCO Secure</span>
             </div>
 
-            <pre className="overflow-x-auto rounded-xl bg-[#040e24] p-3 text-[11px] font-mono text-sky-300 leading-relaxed border border-[#1a365d] max-h-52">
+            <pre className="overflow-x-auto rounded-xl bg-[#0c1a14] p-3 text-[11px] font-mono text-emerald-400 leading-relaxed border border-[#C59B46]/30 max-h-52">
               {liveMqttPayload}
             </pre>
           </div>
@@ -285,32 +286,32 @@ export const ProfileAndHardware: React.FC = () => {
 
         {/* Right 6 Cols: Consumer Energy Profile Form */}
         <div className="lg:col-span-6">
-          <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-6 shadow-xl space-y-5">
-            <div className="pb-2 border-b border-[#1a365d]">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <User className="h-4 w-4 text-amber-400" />
+          <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-6 shadow-sm space-y-5">
+            <div className="pb-2 border-b border-[#C59B46]/20">
+              <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                <User className="h-4 w-4 text-[#C59B46]" />
                 <span>TNEB Consumer Service Information</span>
               </h3>
-              <p className="text-xs text-slate-400">Update consumer credentials and bi-monthly consumption targets</p>
+              <p className="text-xs text-slate-600">Update consumer credentials and bi-monthly consumption targets</p>
             </div>
 
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Consumer Service No.
                   </label>
                   <input
                     type="text"
                     value={consumerNumber}
                     onChange={(e) => setConsumerNumber(e.target.value)}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs font-mono text-amber-300 font-bold focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs font-mono text-[#164430] font-bold focus:border-[#C59B46] focus:outline-none"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Sanctioned Load (kW)
                   </label>
                   <input
@@ -320,7 +321,7 @@ export const ProfileAndHardware: React.FC = () => {
                     max="50"
                     value={sanctionedLoadKw}
                     onChange={(e) => setSanctionedLoadKw(Number(e.target.value))}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs font-mono text-white focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs font-mono text-slate-900 focus:border-[#C59B46] focus:outline-none"
                     required
                   />
                 </div>
@@ -328,27 +329,27 @@ export const ProfileAndHardware: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Registered Consumer Name
                   </label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs text-slate-900 focus:border-[#C59B46] focus:outline-none"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Section Office
                   </label>
                   <input
                     type="text"
                     value={sectionOffice}
                     onChange={(e) => setSectionOffice(e.target.value)}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs text-slate-900 focus:border-[#C59B46] focus:outline-none"
                     required
                   />
                 </div>
@@ -356,34 +357,34 @@ export const ProfileAndHardware: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Registered Email (EB Alerts)
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs text-slate-900 focus:border-[#C59B46] focus:outline-none"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Distribution EDC Circle
                   </label>
                   <input
                     type="text"
                     value={distributionCircle}
                     onChange={(e) => setDistributionCircle(e.target.value)}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs text-slate-900 focus:border-[#C59B46] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Household Occupants
                   </label>
                   <input
@@ -392,12 +393,12 @@ export const ProfileAndHardware: React.FC = () => {
                     max="20"
                     value={householdMembers}
                     onChange={(e) => setHouseholdMembers(Number(e.target.value))}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs text-slate-900 focus:border-[#C59B46] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Floor Area (Sq. Ft.)
                   </label>
                   <input
@@ -406,13 +407,13 @@ export const ProfileAndHardware: React.FC = () => {
                     max="20000"
                     value={homeAreaSqFt}
                     onChange={(e) => setHomeAreaSqFt(Number(e.target.value))}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs text-white focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs text-slate-900 focus:border-[#C59B46] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Bi-Monthly Energy Consumption Target (Units / kWh)
                 </label>
                 <div className="flex items-center gap-3">
@@ -422,13 +423,13 @@ export const ProfileAndHardware: React.FC = () => {
                     max="5000"
                     value={monthlyBudgetKwh * 2}
                     onChange={(e) => setMonthlyBudgetKwh(Number(e.target.value) / 2)}
-                    className="w-full rounded-xl border border-[#1a365d] bg-[#030b1e] px-3 py-2 text-xs font-mono text-white focus:border-sky-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-[#FAF7F0] px-3 py-2 text-xs font-mono text-slate-900 focus:border-[#C59B46] focus:outline-none"
                   />
-                  <span className="text-xs text-slate-300 font-mono whitespace-nowrap">
+                  <span className="text-xs text-slate-700 font-mono whitespace-nowrap">
                     Units / Bi-Monthly
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-400 mt-1 block">
+                <span className="text-[10px] text-slate-500 mt-1 block">
                   Used by TNEB SmartGrid to calculate your efficiency score and slab escalation warnings.
                 </span>
               </div>
@@ -436,12 +437,12 @@ export const ProfileAndHardware: React.FC = () => {
               <div className="pt-3">
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-sky-500 hover:from-amber-400 hover:to-sky-400 py-2.5 text-xs font-black text-slate-950 shadow-md transition-all flex items-center justify-center gap-1.5"
+                  className="w-full rounded-xl bg-[#164430] hover:bg-[#1e583e] py-2.5 text-xs font-black text-[#FAF7F0] shadow-md transition-all flex items-center justify-center gap-1.5"
                   id="save-profile-btn"
                 >
                   {isSaved ? (
                     <>
-                      <Check className="h-4 w-4 stroke-[3]" />
+                      <Check className="h-4 w-4 stroke-[3] text-[#C59B46]" />
                       <span>TNEB Profile Updated Successfully!</span>
                     </>
                   ) : (

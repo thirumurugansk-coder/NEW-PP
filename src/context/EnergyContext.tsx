@@ -120,24 +120,13 @@ const EnergyContext = createContext<EnergyContextType | undefined>(undefined);
 export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [themeMode, setThemeModeState] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem('tneb_theme_mode');
-    return (saved as ThemeMode) || 'tneb-dark';
+    const saved = localStorage.getItem('tneb_theme_mode_v2');
+    return (saved as ThemeMode) || 'tneb-light';
   });
 
   const setThemeMode = useCallback((mode: ThemeMode) => {
     setThemeModeState(mode);
-    localStorage.setItem('tneb_theme_mode', mode);
-    // Sync class on body / document
-    if (mode === 'tneb-light') {
-      document.documentElement.classList.add('tneb-light-theme');
-      document.documentElement.classList.remove('tneb-dark-theme', 'tneb-scada-theme');
-    } else if (mode === 'tneb-scada') {
-      document.documentElement.classList.add('tneb-scada-theme');
-      document.documentElement.classList.remove('tneb-dark-theme', 'tneb-light-theme');
-    } else {
-      document.documentElement.classList.add('tneb-dark-theme');
-      document.documentElement.classList.remove('tneb-light-theme', 'tneb-scada-theme');
-    }
+    localStorage.setItem('tneb_theme_mode_v2', mode);
   }, []);
 
   useEffect(() => {
@@ -145,18 +134,39 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [themeMode, setThemeMode]);
 
   const [appliances, setAppliances] = useState<Appliance[]>(() => {
-    const saved = localStorage.getItem('wattwise_appliances');
-    return saved ? JSON.parse(saved) : initialAppliances;
+    try {
+      const saved = localStorage.getItem('wattwise_appliances_v2');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.map((a: Appliance) => ({ ...a, currentWatts: 0 }));
+      }
+      localStorage.removeItem('wattwise_appliances');
+      return initialAppliances;
+    } catch {
+      return initialAppliances;
+    }
   });
 
   const [alerts, setAlerts] = useState<EnergyAlert[]>(() => {
-    const saved = localStorage.getItem('wattwise_alerts');
-    return saved ? JSON.parse(saved) : initialAlerts;
+    try {
+      const saved = localStorage.getItem('wattwise_alerts_v2');
+      if (saved) return JSON.parse(saved);
+      localStorage.removeItem('wattwise_alerts');
+      return initialAlerts;
+    } catch {
+      return initialAlerts;
+    }
   });
 
   const [suggestions, setSuggestions] = useState<EnergySuggestion[]>(() => {
-    const saved = localStorage.getItem('wattwise_suggestions');
-    return saved ? JSON.parse(saved) : initialSuggestions;
+    try {
+      const saved = localStorage.getItem('wattwise_suggestions_v2');
+      if (saved) return JSON.parse(saved);
+      localStorage.removeItem('wattwise_suggestions');
+      return initialSuggestions;
+    } catch {
+      return initialSuggestions;
+    }
   });
 
   const [tariffPlan, setTariffPlan] = useState<TariffPlan>(() => {
@@ -208,8 +218,14 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   const [grievances, setGrievances] = useState<TnebGrievance[]>(() => {
-    const saved = localStorage.getItem('tneb_grievances');
-    return saved ? JSON.parse(saved) : initialGrievances;
+    try {
+      const saved = localStorage.getItem('tneb_grievances_v2');
+      if (saved) return JSON.parse(saved);
+      localStorage.removeItem('tneb_grievances');
+      return initialGrievances;
+    } catch {
+      return initialGrievances;
+    }
   });
 
   const [outageNotices] = useState<TnebOutageNotice[]>(initialOutageNotices);
@@ -272,15 +288,15 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Persist state changes
   useEffect(() => {
-    localStorage.setItem('wattwise_appliances', JSON.stringify(appliances));
+    localStorage.setItem('wattwise_appliances_v2', JSON.stringify(appliances));
   }, [appliances]);
 
   useEffect(() => {
-    localStorage.setItem('wattwise_alerts', JSON.stringify(alerts));
+    localStorage.setItem('wattwise_alerts_v2', JSON.stringify(alerts));
   }, [alerts]);
 
   useEffect(() => {
-    localStorage.setItem('wattwise_suggestions', JSON.stringify(suggestions));
+    localStorage.setItem('wattwise_suggestions_v2', JSON.stringify(suggestions));
   }, [suggestions]);
 
   useEffect(() => {
@@ -296,21 +312,8 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [userProfile]);
 
   useEffect(() => {
-    localStorage.setItem('tneb_grievances', JSON.stringify(grievances));
+    localStorage.setItem('tneb_grievances_v2', JSON.stringify(grievances));
   }, [grievances]);
-
-  // Calculate dynamic live active power from connected active appliances
-  const calculatedActiveWatts = useMemo(() => {
-    let baselineWatts = 52; // baseline vampire, router, smart meter control board
-    appliances.forEach((app) => {
-      if (app.status === 'on') {
-        baselineWatts += app.currentWatts > 0 ? app.currentWatts : app.ratingWatts * 0.82;
-      } else {
-        baselineWatts += app.standbyWatts;
-      }
-    });
-    return Math.round(baselineWatts);
-  }, [appliances]);
 
   // Inject real-time data point from physical ESP32 (Web Serial, WiFi WebSocket, or MQTT)
   const injectLiveTelemetry = useCallback((point: Partial<TelemetryDataPoint>) => {

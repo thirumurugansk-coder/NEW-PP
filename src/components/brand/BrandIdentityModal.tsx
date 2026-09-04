@@ -57,43 +57,43 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 sm:p-6 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-6 backdrop-blur-md overflow-y-auto"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl rounded-2xl border border-[#C5A059]/40 bg-[#0D1520] p-6 text-slate-100 shadow-2xl my-auto"
+        className="relative w-full max-w-5xl rounded-2xl border-2 border-[#C59B46]/50 bg-[#FAF7F0] p-6 text-slate-800 shadow-2xl my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-slate-800 pb-5">
+        <div className="flex items-start justify-between border-b border-[#C59B46]/30 pb-5">
           <div className="flex items-center gap-3.5">
-            <div className="p-2.5 rounded-xl bg-[#0D382B] border border-[#C5A059]/50 shadow-md">
+            <div className="p-2.5 rounded-xl bg-white border border-[#C59B46]/50 shadow-sm">
               <VoltPulseLogo variant="icon" size={32} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-black tracking-tight text-white">
-                  VoltPulse <span className="text-[#C5A059]">IoT</span> Brand Identity
+                <h2 className="text-2xl font-black tracking-tight text-[#164430]">
+                  VoltPulse <span className="text-[#C59B46]">IoT</span> Brand Identity
                 </h2>
-                <span className="rounded-full bg-[#0D382B] px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-[#FAF7F0] border border-[#C5A059]/40">
+                <span className="rounded-full bg-[#164430] px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-[#FAF7F0] border border-[#C59B46]/40">
                   Official Assets
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 Smart Electricity Consumption Monitoring & Real-Time Energy Analytics Platform
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Navigation Filters */}
-        <div className="flex flex-wrap items-center gap-2 pt-4 pb-2 border-b border-slate-800/80">
+        <div className="flex flex-wrap items-center gap-2 pt-4 pb-2 border-b border-[#C59B46]/20">
           {[
             { id: 'all', label: 'All Brand Assets' },
             { id: 'master', label: '★ Official Master Identity Artwork' },
@@ -109,8 +109,8 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
               onClick={() => setActiveTab(tab.id as any)}
               className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
                 activeTab === tab.id
-                  ? 'bg-[#164430] text-white border border-[#C59B46]'
-                  : 'bg-slate-900/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent'
+                  ? 'bg-[#164430] text-[#FAF7F0] border border-[#C59B46]'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
               }`}
             >
               {tab.label}
@@ -122,24 +122,24 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
         <div className="mt-6 space-y-6 max-h-[70vh] overflow-y-auto pr-1">
           {/* ★ MASTER OFFICIAL VISUAL IDENTITY ARTWORK */}
           {(activeTab === 'all' || activeTab === 'master') && (
-            <div className="rounded-2xl border-2 border-[#C59B46]/60 bg-[#090F17] p-5 shadow-2xl relative overflow-hidden">
+            <div className="rounded-2xl border-2 border-[#C59B46]/60 bg-white p-5 shadow-md relative overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#164430] text-xs font-bold text-[#C59B46] border border-[#C59B46]/50">
                     ★
                   </span>
-                  <h3 className="text-base font-bold text-slate-100">
+                  <h3 className="text-base font-bold text-slate-900">
                     Official Master Visual Identity Artwork
                   </h3>
                   <span className="rounded bg-[#C59B46] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-slate-950">
                     Official Spec
                   </span>
                 </div>
-                <span className="text-[11px] font-mono text-[#C59B46]">Full Composition • 16:9 Warm Ivory</span>
+                <span className="text-[11px] font-mono text-[#164430] font-bold">Full Composition • 16:9 Warm Ivory</span>
               </div>
 
               {/* Master Artwork Canvas Frame */}
-              <div className="relative rounded-xl border border-[#C59B46]/50 overflow-hidden shadow-2xl bg-[#F5EFE6] group">
+              <div className="relative rounded-xl border border-[#C59B46]/50 overflow-hidden shadow-md bg-[#FAF7F0] group">
                 <img
                   src={officialIdentityImg}
                   alt="VoltPulse IoT Official Master Visual Identity Artwork"
@@ -156,21 +156,21 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
               {/* Composition Breakdown Strip */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 text-[11px]">
-                <div className="rounded-lg bg-[#14181E] p-2.5 border border-slate-800 text-slate-300">
-                  <div className="text-[10px] text-[#C59B46] font-bold uppercase">Transmission Pylon</div>
-                  <div className="text-slate-400 mt-0.5">High-voltage utility grid tower & cables</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-800">
+                  <div className="text-[10px] text-[#164430] font-bold uppercase">Transmission Pylon</div>
+                  <div className="text-slate-600 mt-0.5">High-voltage utility grid tower & cables</div>
                 </div>
-                <div className="rounded-lg bg-[#14181E] p-2.5 border border-slate-800 text-slate-300">
-                  <div className="text-[10px] text-[#C59B46] font-bold uppercase">Smart Meter Display</div>
-                  <div className="text-slate-400 mt-0.5">Digital readout at 230.5 kWh</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-800">
+                  <div className="text-[10px] text-[#164430] font-bold uppercase">Smart Meter Display</div>
+                  <div className="text-slate-600 mt-0.5">Digital readout at 230.5 kWh</div>
                 </div>
-                <div className="rounded-lg bg-[#14181E] p-2.5 border border-slate-800 text-slate-300">
-                  <div className="text-[10px] text-[#C59B46] font-bold uppercase">Frequency Sine Waves</div>
-                  <div className="text-slate-400 mt-0.5">50 Hz alternating current pulse curves</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-800">
+                  <div className="text-[10px] text-[#164430] font-bold uppercase">Frequency Sine Waves</div>
+                  <div className="text-slate-600 mt-0.5">50 Hz alternating current pulse curves</div>
                 </div>
-                <div className="rounded-lg bg-[#14181E] p-2.5 border border-slate-800 text-slate-300">
-                  <div className="text-[10px] text-[#C59B46] font-bold uppercase">Analytics Bar Chart</div>
-                  <div className="text-slate-400 mt-0.5">Consumption trends with IoT nodes</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-800">
+                  <div className="text-[10px] text-[#164430] font-bold uppercase">Analytics Bar Chart</div>
+                  <div className="text-slate-600 mt-0.5">Consumption trends with IoT nodes</div>
                 </div>
               </div>
             </div>
@@ -178,20 +178,20 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
           {/* 1. STANDALONE ICON */}
           {(activeTab === 'all' || activeTab === 'icon') && (
-            <div className="rounded-2xl border border-slate-800 bg-[#090F17] p-5">
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#164430] text-xs font-bold text-[#C59B46]">
                     1
                   </span>
-                  <h3 className="text-base font-bold text-slate-100">Standalone VoltPulse IoT Emblem</h3>
+                  <h3 className="text-base font-bold text-slate-900">Standalone VoltPulse IoT Emblem</h3>
                 </div>
-                <span className="text-[11px] font-mono text-slate-400">1:1 Ratio • Vector & High-Res</span>
+                <span className="text-[11px] font-mono text-slate-500">1:1 Ratio • Vector & High-Res</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Official High-Res Render Asset */}
-                <div className="flex flex-col items-center justify-center rounded-xl bg-[#F5EFE6] p-6 border border-[#C59B46]/40">
+                <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAF7F0] p-6 border border-[#C59B46]/40">
                   <img
                     src={officialEmblemImg}
                     alt="VoltPulse IoT Official Master Emblem"
@@ -212,7 +212,7 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
                 </div>
               </div>
 
-              <p className="text-xs text-slate-400 mt-3">
+              <p className="text-xs text-slate-600 mt-3">
                 Precision vector emblem featuring circular power-meter ring with top IoT node terminal, metallic gold meter calibration ticks,
                 bottom Wi-Fi transmission waves, classic serif letter “V”, sharp metallic gold lightning bolt, and horizontal pulse waveform breaking out to the right.
               </p>
@@ -221,20 +221,20 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
           {/* 2. WORDMARK & OFFICIAL IDENTITY LOCKUP */}
           {(activeTab === 'all' || activeTab === 'wordmark') && (
-            <div className="rounded-2xl border border-slate-800 bg-[#090F17] p-5">
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#164430] text-xs font-bold text-[#C59B46]">
                     2
                   </span>
-                  <h3 className="text-base font-bold text-slate-100">Official Wordmark & Tagline Lockup</h3>
+                  <h3 className="text-base font-bold text-slate-900">Official Wordmark & Tagline Lockup</h3>
                 </div>
-                <span className="text-[11px] font-mono text-slate-400">Horizontal & Full Stacked Versions</span>
+                <span className="text-[11px] font-mono text-slate-500">Horizontal & Full Stacked Versions</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Full Stacked Vector Presentation Canvas (Ivory) */}
-                <div className="flex flex-col items-center justify-center rounded-xl bg-[#F5EFE6] p-8 border border-[#C59B46]/40 shadow-inner">
+                <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAF7F0] p-8 border border-[#C59B46]/40 shadow-inner">
                   <VoltPulseLogo variant="emblem-full" size={120} theme="ivory" />
                   <span className="mt-4 text-[11px] font-bold text-[#164430] tracking-wider uppercase">
                     Official Stacked Identity (Ivory Canvas)
@@ -242,54 +242,54 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
                 </div>
 
                 {/* Dark Technical Horizontal & Stacked Preview */}
-                <div className="flex flex-col items-center justify-center rounded-xl bg-[#14181E] p-8 border border-slate-800 space-y-6">
+                <div className="flex flex-col items-center justify-center rounded-xl bg-[#164430] p-8 border border-[#C59B46]/40 space-y-6">
                   <VoltPulseLogo variant="emblem-full" size={110} theme="dark" />
-                  <div className="w-full pt-4 border-t border-slate-800 flex justify-center">
+                  <div className="w-full pt-4 border-t border-[#C59B46]/30 flex justify-center">
                     <VoltPulseLogo variant="wordmark" size={48} showTagline={true} />
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 rounded-xl bg-[#121824] p-3.5 border border-slate-800/80 text-xs text-slate-300 flex items-center justify-between">
+              <div className="mt-4 rounded-xl bg-[#FAF7F0] p-3.5 border border-[#C59B46]/30 text-xs text-slate-800 flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-[#C59B46]">Official Tagline:</span>{' '}
-                  <span className="font-mono text-white tracking-wider">SMART ENERGY. REAL-TIME INSIGHT.</span>
+                  <span className="font-bold text-[#164430]">Official Tagline:</span>{' '}
+                  <span className="font-mono text-slate-900 font-bold tracking-wider">SMART ENERGY. REAL-TIME INSIGHT.</span>
                 </div>
-                <span className="text-[10px] text-slate-400 uppercase tracking-widest hidden sm:inline">Tracked Uppercase</span>
+                <span className="text-[10px] text-slate-500 uppercase tracking-widest hidden sm:inline">Tracked Uppercase</span>
               </div>
             </div>
           )}
 
           {/* 3. SQUARE APP ICON */}
           {(activeTab === 'all' || activeTab === 'appicon') && (
-            <div className="rounded-2xl border border-slate-800 bg-[#090F17] p-5">
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D382B] text-xs font-bold text-[#C5A059]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#164430] text-xs font-bold text-[#C59B46]">
                     3
                   </span>
-                  <h3 className="text-base font-bold text-slate-100">Square App Icon Version</h3>
+                  <h3 className="text-base font-bold text-slate-900">Square App Icon Version</h3>
                 </div>
-                <span className="text-[11px] font-mono text-slate-400">iOS / Android / PWA App Launcher</span>
+                <span className="text-[11px] font-mono text-slate-500">iOS / Android / PWA App Launcher</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
                 {/* Full Generated Asset */}
-                <div className="sm:col-span-2 flex flex-col items-center justify-center rounded-xl bg-[#14181E] p-6 border border-slate-800">
+                <div className="sm:col-span-2 flex flex-col items-center justify-center rounded-xl bg-[#FAF7F0] p-6 border border-[#C59B46]/30">
                   <img
                     src={appIconImg}
                     alt="VoltPulse IoT Mobile App Icon"
-                    className="h-44 w-44 object-contain rounded-3xl shadow-xl border-2 border-[#C5A059]/40"
+                    className="h-44 w-44 object-contain rounded-3xl shadow-xl border-2 border-[#C59B46]/40"
                     referrerPolicy="no-referrer"
                   />
-                  <span className="mt-3 text-xs font-semibold text-slate-300">
+                  <span className="mt-3 text-xs font-semibold text-slate-700">
                     Master Mobile App Icon (Rounded Squircle Format)
                   </span>
                 </div>
 
                 {/* Scaling verification preview */}
-                <div className="flex flex-col items-center justify-center gap-4 rounded-xl bg-[#070B10] p-4 border border-slate-800">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <div className="flex flex-col items-center justify-center gap-4 rounded-xl bg-[#FAF7F0] p-4 border border-[#C59B46]/30">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                     Size Scalability Check
                   </span>
                   <div className="flex items-end gap-3">
@@ -306,7 +306,7 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
                       <span className="text-[10px] font-mono text-slate-500">32px</span>
                     </div>
                   </div>
-                  <p className="text-[11px] text-center text-slate-400 mt-2">
+                  <p className="text-[11px] text-center text-slate-500 mt-2">
                     Retains optical clarity, contrast, and distinct recognition down to 32px favicon dimension.
                   </p>
                 </div>
@@ -316,19 +316,19 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
           {/* 4. CONTROL CENTER UI BACKGROUND */}
           {(activeTab === 'all' || activeTab === 'bg') && (
-            <div className="rounded-2xl border border-slate-800 bg-[#090F17] p-5">
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D382B] text-xs font-bold text-[#C5A059]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#164430] text-xs font-bold text-[#C59B46]">
                     4
                   </span>
-                  <h3 className="text-base font-bold text-slate-100">Industrial IoT Control Center Background</h3>
+                  <h3 className="text-base font-bold text-slate-900">Industrial IoT Control Center Background</h3>
                 </div>
-                <span className="text-[11px] font-mono text-[#C5A059]">16:9 • Ultra-High Resolution Canvas</span>
+                <span className="text-[11px] font-mono text-[#164430] font-bold">16:9 • Ultra-High Resolution Canvas</span>
               </div>
 
               {/* Background Canvas Frame */}
-              <div className="relative rounded-xl border border-[#C5A059]/40 overflow-hidden shadow-2xl group">
+              <div className="relative rounded-xl border border-[#C59B46]/40 overflow-hidden shadow-md group">
                 <img
                   src={controlCenterBg}
                   alt="VoltPulse IoT Control Center Background"
@@ -337,14 +337,14 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
                 />
 
                 {/* Overlaid UI Spec Callout */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#090F17] via-transparent to-transparent flex flex-col justify-end p-5">
-                  <div className="rounded-xl border border-white/10 bg-[#090F17]/90 p-4 backdrop-blur-md max-w-xl">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#C5A059]">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-5">
+                  <div className="rounded-xl border border-white/20 bg-slate-900/90 p-4 backdrop-blur-md max-w-xl">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#C59B46]">
                       <Cpu className="h-4 w-4" />
                       <span>Telemetry Backdrop Architecture</span>
                     </div>
-                    <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                      Engineered with a low-contrast dark charcoal (#14181E) and deep forest green (#0D382B) substrate,
+                    <p className="text-xs text-slate-200 mt-1 leading-relaxed">
+                      Engineered with a low-contrast dark charcoal (#14181E) and deep forest green (#164430) substrate,
                       etched with delicate electrical circuit traces, power-grid lines, smooth pulse waveforms, IoT connection nodes,
                       and subtle warm-gold metallic accents with vast negative space for effortless dashboard data readability.
                     </p>
@@ -354,21 +354,21 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
               {/* Feature Tags */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 text-[11px]">
-                <div className="rounded-lg bg-[#14181E] p-2.5 border border-slate-800 text-slate-300">
-                  <div className="text-[10px] text-[#C5A059] font-bold">CIRCUIT TRACES</div>
-                  <div className="text-slate-400 mt-0.5">Subtle etched PCB pathways</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-800">
+                  <div className="text-[10px] text-[#164430] font-bold">CIRCUIT TRACES</div>
+                  <div className="text-slate-600 mt-0.5">Subtle etched PCB pathways</div>
                 </div>
-                <div className="rounded-lg bg-[#14181E] p-2.5 border border-slate-800 text-slate-300">
-                  <div className="text-[10px] text-[#C5A059] font-bold">POWER-GRID GEOMETRY</div>
-                  <div className="text-slate-400 mt-0.5">Vector utility grid coordination</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-800">
+                  <div className="text-[10px] text-[#164430] font-bold">POWER-GRID GEOMETRY</div>
+                  <div className="text-slate-600 mt-0.5">Vector utility grid coordination</div>
                 </div>
-                <div className="rounded-lg bg-[#14181E] p-2.5 border border-slate-800 text-slate-300">
-                  <div className="text-[10px] text-[#C5A059] font-bold">WAVEFORM PULSES</div>
-                  <div className="text-slate-400 mt-0.5">50 Hz AC frequency waveforms</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-800">
+                  <div className="text-[10px] text-[#164430] font-bold">WAVEFORM PULSES</div>
+                  <div className="text-slate-600 mt-0.5">50 Hz AC frequency waveforms</div>
                 </div>
-                <div className="rounded-lg bg-[#14181E] p-2.5 border border-slate-800 text-slate-300">
-                  <div className="text-[10px] text-[#C5A059] font-bold">GOLD HIGHLIGHTS</div>
-                  <div className="text-slate-400 mt-0.5">Muted metallic conductivity accents</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-800">
+                  <div className="text-[10px] text-[#164430] font-bold">GOLD HIGHLIGHTS</div>
+                  <div className="text-slate-600 mt-0.5">Muted metallic conductivity accents</div>
                 </div>
               </div>
             </div>
@@ -376,19 +376,19 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
           {/* 5. LIGHT VISUAL IDENTITY BACKDROP */}
           {(activeTab === 'all' || activeTab === 'lightbg') && (
-            <div className="rounded-2xl border border-slate-800 bg-[#090F17] p-5">
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FAF7F0] text-xs font-bold text-[#0D382B]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#164430] text-xs font-bold text-[#C59B46]">
                     5
                   </span>
-                  <h3 className="text-base font-bold text-slate-100">Light Visual Identity Backdrop</h3>
+                  <h3 className="text-base font-bold text-slate-900">Light Visual Identity Backdrop</h3>
                 </div>
-                <span className="text-[11px] font-mono text-[#C5A059]">16:9 • Warm Ivory Engineering Canvas</span>
+                <span className="text-[11px] font-mono text-[#164430] font-bold">16:9 • Warm Ivory Engineering Canvas</span>
               </div>
 
               {/* Master Light Backdrop with Centered Logo Showcase */}
-              <div className="relative rounded-xl border border-[#C5A059]/40 overflow-hidden shadow-2xl group bg-[#FAF7F0]">
+              <div className="relative rounded-xl border border-[#C59B46]/40 overflow-hidden shadow-md group bg-[#FAF7F0]">
                 {/* 16:9 Backdrop Image */}
                 <img
                   src={lightBackdropImg}
@@ -399,32 +399,32 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
                 {/* Centered Logo Preview directly in the soft central clearing */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-6 pointer-events-none">
-                  <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-white/70 backdrop-blur-sm border border-[#C5A059]/40 shadow-xl max-w-md">
+                  <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-white/85 backdrop-blur-sm border border-[#C59B46]/40 shadow-xl max-w-md">
                     <VoltPulseLogo variant="icon" size={80} theme="ivory" />
                     <div className="mt-3 flex items-center gap-2">
                       <span className="text-2xl font-black tracking-tight text-[#14181E]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-                        Volt<span className="text-[#C5A059]">Pulse</span>
+                        Volt<span className="text-[#C59B46]">Pulse</span>
                       </span>
-                      <span className="rounded bg-[#0D382B] px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-[#FAF7F0] border border-[#C5A059]/60">
+                      <span className="rounded bg-[#164430] px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-[#FAF7F0] border border-[#C59B46]/60">
                         IoT
                       </span>
                     </div>
-                    <span className="text-[11px] font-semibold text-[#0D382B] tracking-wider uppercase mt-1">
+                    <span className="text-[11px] font-semibold text-[#164430] tracking-wider uppercase mt-1">
                       Smart Electricity Monitoring & Energy Intelligence
                     </span>
                   </div>
                 </div>
 
                 {/* Overlaid Context Ribbon */}
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#14181E]/80 via-[#14181E]/40 to-transparent p-4 flex flex-wrap items-center justify-between gap-2">
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs font-bold text-[#FAF7F0]">
                     Modern Electrical Infrastructure • European Industrial Aesthetic
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-[#0D382B] px-2 py-0.5 text-[10px] font-bold text-[#FAF7F0]">
+                    <span className="rounded bg-[#164430] px-2 py-0.5 text-[10px] font-bold text-[#FAF7F0]">
                       Warm Ivory Canvas
                     </span>
-                    <span className="rounded bg-[#FAF7F0] px-2 py-0.5 text-[10px] font-bold text-[#0D382B]">
+                    <span className="rounded bg-[#FAF7F0] px-2 py-0.5 text-[10px] font-bold text-[#164430]">
                       Muted Gold Accents
                     </span>
                   </div>
@@ -433,20 +433,20 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
               {/* Architectural Highlights Strip */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 text-[11px]">
-                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C5A059]/30 text-slate-900">
-                  <div className="text-[10px] text-[#0D382B] font-bold uppercase">Abstract Pulse Curves</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-900">
+                  <div className="text-[10px] text-[#164430] font-bold uppercase">Abstract Pulse Curves</div>
                   <div className="text-slate-600 mt-0.5">Flowing electricity frequency arcs</div>
                 </div>
-                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C5A059]/30 text-slate-900">
-                  <div className="text-[10px] text-[#0D382B] font-bold uppercase">Architectural Grid</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-900">
+                  <div className="text-[10px] text-[#164430] font-bold uppercase">Architectural Grid</div>
                   <div className="text-slate-600 mt-0.5">Subtle power transmission lines</div>
                 </div>
-                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C5A059]/30 text-slate-900">
-                  <div className="text-[10px] text-[#0D382B] font-bold uppercase">Blueprint Details</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-900">
+                  <div className="text-[10px] text-[#164430] font-bold uppercase">Blueprint Details</div>
                   <div className="text-slate-600 mt-0.5">Smart meter geometry & circuits</div>
                 </div>
-                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C5A059]/30 text-slate-900">
-                  <div className="text-[10px] text-[#0D382B] font-bold uppercase">Use Cases</div>
+                <div className="rounded-lg bg-[#FAF7F0] p-2.5 border border-[#C59B46]/30 text-slate-900">
+                  <div className="text-[10px] text-[#164430] font-bold uppercase">Use Cases</div>
                   <div className="text-slate-600 mt-0.5">Splash, hero, decks & presentations</div>
                 </div>
               </div>
@@ -455,13 +455,13 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
 
           {/* 6. DESIGN SPECS & PALETTE */}
           {(activeTab === 'all' || activeTab === 'specs') && (
-            <div className="rounded-2xl border border-slate-800 bg-[#090F17] p-5 space-y-6">
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 space-y-6">
               <div>
-                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#C5A059]" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-[#C59B46]" />
                   Brand Color Palette
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-600 mt-1">
                   Click any swatch to copy its hexadecimal code to your clipboard.
                 </p>
 
@@ -470,10 +470,10 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
                     <button
                       key={color.name}
                       onClick={() => copyColorToClipboard(color.hex, color.name)}
-                      className="group flex flex-col rounded-xl border border-slate-800 bg-[#14181E] p-3 text-left transition-all hover:border-[#C5A059]/60 hover:scale-[1.02]"
+                      className="group flex flex-col rounded-xl border border-slate-200 bg-[#FAF7F0] p-3 text-left transition-all hover:border-[#C59B46]/60 hover:scale-[1.02]"
                     >
                       <div
-                        className="h-16 w-full rounded-lg border border-white/10 flex items-end justify-end p-2 transition-transform shadow-inner"
+                        className="h-16 w-full rounded-lg border border-slate-300 flex items-end justify-end p-2 transition-transform shadow-inner"
                         style={{ backgroundColor: color.hex }}
                       >
                         {copiedColor === color.name ? (
@@ -486,10 +486,10 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
                       </div>
                       <div className="mt-2.5">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-200">{color.name}</span>
-                          <span className="text-xs font-mono font-bold text-[#C5A059]">{color.hex}</span>
+                          <span className="text-xs font-bold text-slate-900">{color.name}</span>
+                          <span className="text-xs font-mono font-bold text-[#164430]">{color.hex}</span>
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-1 leading-snug">{color.desc}</p>
+                        <p className="text-[11px] text-slate-600 mt-1 leading-snug">{color.desc}</p>
                       </div>
                     </button>
                   ))}
@@ -497,68 +497,68 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
               </div>
 
               {/* Geometric Symbology Meaning */}
-              <div className="border-t border-slate-800 pt-5">
-                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                  <Layers className="h-4 w-4 text-[#C5A059]" />
+              <div className="border-t border-[#C59B46]/20 pt-5">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-[#C59B46]" />
                   Geometric Symbology & Engineering Architecture
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4 text-xs">
-                  <div className="rounded-xl border border-slate-800/80 bg-[#121824] p-3.5">
-                    <div className="font-bold text-[#C59B46] flex items-center gap-2">
+                  <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-3.5">
+                    <div className="font-bold text-[#164430] flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-[#C59B46]" />
                       Deep Green Outer Arc & IoT Node
                     </div>
-                    <p className="text-slate-400 mt-1.5 leading-relaxed">
+                    <p className="text-slate-600 mt-1.5 leading-relaxed">
                       Deep forest green containment perimeter starting with a circular terminal node dot, symbolizing edge sensor connectivity and continuous grid circuit protection.
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-slate-800/80 bg-[#121824] p-3.5">
-                    <div className="font-bold text-[#C59B46] flex items-center gap-2">
+                  <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-3.5">
+                    <div className="font-bold text-[#164430] flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-[#C59B46]" />
                       Gold Meter Graduation Ticks
                     </div>
-                    <p className="text-slate-400 mt-1.5 leading-relaxed">
+                    <p className="text-slate-600 mt-1.5 leading-relaxed">
                       Radial calibration gauge markings along the gold perimeter representing utility-grade AMI smart meter calibration and active kWh measurement.
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-slate-800/80 bg-[#121824] p-3.5">
-                    <div className="font-bold text-[#C59B46] flex items-center gap-2">
+                  <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-3.5">
+                    <div className="font-bold text-[#164430] flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-[#C59B46]" />
                       Bottom Wi-Fi Transmission Waves
                     </div>
-                    <p className="text-slate-400 mt-1.5 leading-relaxed">
+                    <p className="text-slate-600 mt-1.5 leading-relaxed">
                       Three-tier wireless radiation waves at the 6 o&apos;clock apex representing continuous IoT broadcast across Wi-Fi, MQTT, and Web Serial.
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-slate-800/80 bg-[#121824] p-3.5">
-                    <div className="font-bold text-[#C59B46] flex items-center gap-2">
+                  <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-3.5">
+                    <div className="font-bold text-[#164430] flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-[#C59B46]" />
                       Classical Serif Letter “V”
                     </div>
-                    <p className="text-slate-400 mt-1.5 leading-relaxed">
+                    <p className="text-slate-600 mt-1.5 leading-relaxed">
                       The foundational letter “V” of VoltPulse crafted in authoritative deep forest green with top bracket serifs anchoring the core identity.
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-slate-800/80 bg-[#121824] p-3.5">
-                    <div className="font-bold text-[#C59B46] flex items-center gap-2">
+                  <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-3.5">
+                    <div className="font-bold text-[#164430] flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-[#C59B46]" />
                       Sharp Metallic Gold Lightning Bolt
                     </div>
-                    <p className="text-slate-400 mt-1.5 leading-relaxed">
+                    <p className="text-slate-600 mt-1.5 leading-relaxed">
                       Dynamic electrical bolt emerging from the center of the V, signifying instantaneous voltage potential, high-speed sampling, and active power.
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-slate-800/80 bg-[#121824] p-3.5">
-                    <div className="font-bold text-[#C59B46] flex items-center gap-2">
+                  <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-3.5">
+                    <div className="font-bold text-[#164430] flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-[#C59B46]" />
                       Horizontal Pulse Waveform
                     </div>
-                    <p className="text-slate-400 mt-1.5 leading-relaxed">
+                    <p className="text-slate-600 mt-1.5 leading-relaxed">
                       An electrocardiogram / 50 Hz power pulse that breaches through the right border of the dial, signifying real-time live telemetry escaping static bounds.
                     </p>
                   </div>
@@ -569,14 +569,14 @@ export const BrandIdentityModal: React.FC<BrandIdentityModalProps> = ({ isOpen, 
         </div>
 
         {/* Footer */}
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4 text-xs text-slate-400">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#C59B46]/30 pt-4 text-xs text-slate-600">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+            <ShieldCheck className="h-4 w-4 text-[#164430]" />
             <span>VoltPulse IoT Brand System • Vector Geometry Certified</span>
           </div>
           <button
             onClick={onClose}
-            className="rounded-xl bg-[#0D382B] px-5 py-2 text-xs font-bold text-white hover:bg-[#124838] transition-colors border border-[#C5A059]/40"
+            className="rounded-xl bg-[#164430] px-5 py-2 text-xs font-bold text-[#FAF7F0] hover:bg-[#1e583e] transition-colors border border-[#C59B46]/40"
           >
             Close Brand Showcase
           </button>

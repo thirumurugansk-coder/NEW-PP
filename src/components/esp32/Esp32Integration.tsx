@@ -137,7 +137,10 @@ export const Esp32Integration: React.FC = () => {
         setWsLog((prev) => [`[${new Date().toLocaleTimeString()}] TX Error: ${err.message}`, ...prev]);
       }
     } else {
-      alert(`ESP32 hardware is not connected. Connect via USB Web Serial, WiFi WebSocket, or MQTT to dispatch commands.`);
+      setWsLog((prev) => [
+        `[${new Date().toLocaleTimeString()}] Hardware Standby: Connect ESP32 via USB Serial or WiFi to send command: ${cmd}`,
+        ...prev.slice(0, 99),
+      ]);
     }
   };
 
@@ -587,42 +590,42 @@ void loop() {
   return (
     <div className="space-y-6">
       {/* Top Banner Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl border border-[#1a365d] bg-gradient-to-r from-[#081b3d] via-[#09224f] to-[#040e24] p-5 shadow-lg">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl border-2 border-[#C59B46]/40 bg-white p-5 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-sky-500 text-slate-950 font-black shadow-md">
-              <Cpu className="h-5 w-5" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#164430] text-[#FAF7F0] font-black shadow-md border border-[#C59B46]/40">
+              <Cpu className="h-5 w-5 text-[#C59B46]" />
             </div>
-            <h2 className="text-lg font-black text-white flex items-center gap-2">
+            <h2 className="text-lg font-black text-[#164430] flex items-center gap-2">
               <span>ESP32 Hardware Bridge & Microcontroller Gateway</span>
             </h2>
-            <span className="rounded bg-sky-500/20 px-2.5 py-0.5 text-[10px] font-bold text-sky-300 border border-sky-500/30 font-mono">
+            <span className="rounded bg-[#FAF7F0] px-2.5 py-0.5 text-[10px] font-bold text-[#164430] border border-[#C59B46]/40 font-mono">
               Web Serial / WiFi / MQTT
             </span>
           </div>
-          <p className="text-xs text-slate-300">
+          <p className="text-xs text-slate-600">
             Direct real-time hardware telemetry link connecting ESP32-WROOM-32, PZEM-004T v3.0, SCT-013 CT & Relays to this web app.
           </p>
         </div>
 
         {/* Live Status Pill */}
         <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d] flex items-center gap-3">
+          <div className="rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/30 shadow-sm flex items-center gap-3">
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3">
                 <span
                   className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                    isEsp32Connected ? 'bg-emerald-400 animate-ping' : 'bg-rose-400'
+                    isEsp32Connected ? 'bg-emerald-500 animate-ping' : 'bg-rose-400'
                   }`}
                 />
                 <span
                   className={`relative inline-flex h-3 w-3 rounded-full ${
-                    isEsp32Connected ? 'bg-emerald-500' : 'bg-rose-400'
+                    isEsp32Connected ? 'bg-emerald-600' : 'bg-rose-500'
                   }`}
                 />
               </span>
               <div>
-                <div className="text-xs font-bold text-white">
+                <div className="text-xs font-bold text-slate-900">
                   {isSerialConnected
                     ? 'USB Serial Connected'
                     : isWifiConnected
@@ -631,10 +634,10 @@ void loop() {
                     ? 'MQTT SCADA Online'
                     : 'ESP32 Disconnected (No Telemetry)'}
                 </div>
-                <div className="text-[10px] text-slate-400 font-mono">
+                <div className="text-[10px] text-slate-600 font-mono">
                   {isEsp32Connected
                     ? `Active: ${metrics.voltageVolts}V | ${metrics.currentAmps}A | ${metrics.currentPowerWatts}W`
-                    : 'Real-time telemetry held at 0 W (No fake values)'}
+                    : 'Real-time telemetry held at 0 W (Hardware Standby)'}
                 </div>
               </div>
             </div>
@@ -647,10 +650,10 @@ void loop() {
                   handleToggleSerial();
                 }
               }}
-              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all shadow-sm ${
                 isEsp32Connected
-                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30'
-                  : 'bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 shadow-md'
+                  ? 'bg-rose-100 text-rose-800 border border-rose-300 hover:bg-rose-200'
+                  : 'bg-[#164430] text-[#FAF7F0] font-bold hover:bg-[#1e583e]'
               }`}
             >
               {isEsp32Connected ? 'Disconnect ESP32' : 'Connect USB Serial'}
@@ -660,7 +663,7 @@ void loop() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-[#1a365d] pb-2">
+      <div className="flex flex-wrap gap-2 border-b border-[#C59B46]/30 pb-2">
         {[
           { id: 'serial', label: 'Web Serial (USB / UART)', icon: Usb, badge: isSerialConnected ? 'ONLINE' : undefined },
           { id: 'wifi_ws', label: 'WiFi & Local WebSocket', icon: Wifi, badge: wsStatus === 'connected' ? 'CONNECTED' : undefined },
@@ -677,16 +680,16 @@ void loop() {
               onClick={() => setActiveSubTab(tab.id as any)}
               className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                 isActive
-                  ? 'bg-gradient-to-r from-amber-400 to-sky-500 text-slate-950 shadow-md shadow-sky-950/40 font-black'
-                  : 'bg-[#081b3d] text-slate-300 hover:bg-[#0d2a5e] hover:text-white border border-[#1a365d]'
+                  ? 'bg-[#164430] text-[#FAF7F0] shadow-md border border-[#C59B46]/50 font-black'
+                  : 'bg-white text-slate-700 hover:text-slate-900 border border-slate-200 shadow-xs'
               }`}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className={`h-4 w-4 ${isActive ? 'text-[#C59B46]' : 'text-slate-500'}`} />
               <span>{tab.label}</span>
               {tab.badge && (
                 <span
                   className={`rounded px-1.5 py-0.2 text-[9px] font-mono ${
-                    isActive ? 'bg-slate-950/30 text-slate-950 font-extrabold' : 'bg-emerald-500/20 text-emerald-300'
+                    isActive ? 'bg-[#FAF7F0] text-[#164430] font-extrabold' : 'bg-emerald-100 text-emerald-800'
                   }`}
                 >
                   {tab.badge}
@@ -702,18 +705,18 @@ void loop() {
         <div className="grid gap-6 lg:grid-cols-12">
           {/* Left Column: Connection & Live Hardware Telemetry */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Usb className="h-4 w-4 text-sky-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+                <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                  <Usb className="h-4 w-4 text-[#C59B46]" />
                   <span>Web Serial API Configuration</span>
                 </h3>
-                <span className="text-[10px] text-slate-400 font-mono">Chrome / Edge / Opera</span>
+                <span className="text-[10px] text-slate-500 font-mono">Chrome / Edge / Opera</span>
               </div>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Select Baud Rate (bps):</label>
+                  <label className="text-slate-700 font-semibold block mb-1">Select Baud Rate (bps):</label>
                   <div className="grid grid-cols-4 gap-2 font-mono">
                     {[9600, 57600, 115200, 230400].map((rate) => (
                       <button
@@ -723,8 +726,8 @@ void loop() {
                         disabled={isSerialConnected}
                         className={`p-2 rounded-lg border text-center font-bold transition-all ${
                           baudRate === rate
-                            ? 'border-amber-400 bg-amber-400/20 text-amber-300'
-                            : 'border-[#1a365d] bg-[#030b1e] text-slate-400 hover:text-white'
+                            ? 'border-[#C59B46] bg-[#FAF7F0] text-[#164430] shadow-xs'
+                            : 'border-slate-200 bg-white text-slate-600 hover:text-slate-900'
                         } ${isSerialConnected ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         {rate}
@@ -733,27 +736,27 @@ void loop() {
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d] space-y-2">
+                <div className="rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/20 space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400">USB UART Protocol:</span>
-                    <span className="font-mono text-emerald-400 font-bold">8-N-1 (Non-parity)</span>
+                    <span className="text-slate-600">USB UART Protocol:</span>
+                    <span className="font-mono text-[#164430] font-bold">8-N-1 (Non-parity)</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400">Driver Compatibility:</span>
-                    <span className="text-slate-200">CP2102 / CH340 / FTDI</span>
+                    <span className="text-slate-600">Driver Compatibility:</span>
+                    <span className="text-slate-800 font-medium">CP2102 / CH340 / FTDI</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400">Payload Parser:</span>
-                    <span className="text-sky-300 font-mono">JSON & CSV Telemetry</span>
+                    <span className="text-slate-600">Payload Parser:</span>
+                    <span className="text-[#164430] font-mono font-bold">JSON & CSV Telemetry</span>
                   </div>
                 </div>
 
                 <button
                   onClick={handleToggleSerial}
-                  className={`w-full rounded-xl p-3 text-xs font-black shadow-lg transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full rounded-xl p-3 text-xs font-black shadow-md transition-all flex items-center justify-center gap-2 ${
                     isSerialConnected
-                      ? 'bg-rose-500 hover:bg-rose-600 text-white'
-                      : 'bg-gradient-to-r from-amber-400 via-sky-500 to-blue-600 text-slate-950 hover:opacity-95'
+                      ? 'bg-rose-600 hover:bg-rose-700 text-white'
+                      : 'bg-[#164430] hover:bg-[#1e583e] text-[#FAF7F0]'
                   }`}
                   id="connect-esp32-serial-btn"
                 >
@@ -764,65 +767,73 @@ void loop() {
             </div>
 
             {/* Live Hardware Packet Gauges */}
-            <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-emerald-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+                <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                  <Activity className={`h-4 w-4 ${isEsp32Connected ? 'text-emerald-600' : 'text-slate-400'}`} />
                   <span>Live Telemetry Stream from Microcontroller</span>
                 </h3>
-                <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-mono">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping inline-block" />
-                  <span>50 Hz Sampling</span>
-                </span>
+                {isEsp32Connected ? (
+                  <span className="flex items-center gap-1 text-[10px] text-emerald-700 font-mono font-bold">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping inline-block" />
+                    <span>Live 1 Hz Streaming</span>
+                  </span>
+                ) : (
+                  <span className="text-[10px] text-slate-500 font-mono">
+                    Device Offline (0 W)
+                  </span>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3 font-mono">
-                <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d]">
-                  <span className="text-[10px] text-slate-400 font-sans block">RMS Voltage</span>
-                  <div className="text-xl font-black text-amber-300">{metrics.voltageVolts} <span className="text-xs text-slate-400 font-normal">V</span></div>
-                  <div className="text-[9px] text-slate-400 mt-1">230V Nominal Grid</div>
+                <div className="rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/20 shadow-xs">
+                  <span className="text-[10px] text-slate-600 font-sans block font-medium">RMS Voltage</span>
+                  <div className="text-xl font-black text-[#C59B46]">{metrics.voltageVolts} <span className="text-xs text-slate-500 font-normal">V</span></div>
+                  <div className="text-[9px] text-slate-500 mt-1">{isEsp32Connected ? '230V Nominal Grid' : 'Hardware Disconnected'}</div>
                 </div>
 
-                <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d]">
-                  <span className="text-[10px] text-slate-400 font-sans block">RMS Current</span>
-                  <div className="text-xl font-black text-sky-300">{metrics.currentAmps} <span className="text-xs text-slate-400 font-normal">A</span></div>
-                  <div className="text-[9px] text-slate-400 mt-1">PZEM Shunt / CT</div>
+                <div className="rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/20 shadow-xs">
+                  <span className="text-[10px] text-slate-600 font-sans block font-medium">RMS Current</span>
+                  <div className="text-xl font-black text-[#164430]">{metrics.currentAmps} <span className="text-xs text-slate-500 font-normal">A</span></div>
+                  <div className="text-[9px] text-slate-500 mt-1">{isEsp32Connected ? 'PZEM Shunt / CT' : 'No Current Flow'}</div>
                 </div>
 
-                <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d]">
-                  <span className="text-[10px] text-slate-400 font-sans block">Active Power</span>
-                  <div className="text-xl font-black text-emerald-400">{metrics.currentPowerWatts} <span className="text-xs text-slate-400 font-normal">W</span></div>
-                  <div className="text-[9px] text-slate-400 mt-1">{(metrics.currentPowerWatts / 1000).toFixed(3)} kW</div>
+                <div className="rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/20 shadow-xs">
+                  <span className="text-[10px] text-slate-600 font-sans block font-medium">Active Power</span>
+                  <div className="text-xl font-black text-emerald-700">{metrics.currentPowerWatts} <span className="text-xs text-slate-500 font-normal">W</span></div>
+                  <div className="text-[9px] text-slate-500 mt-1">{(metrics.currentPowerWatts / 1000).toFixed(3)} kW</div>
                 </div>
 
-                <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d]">
-                  <span className="text-[10px] text-slate-400 font-sans block">Power Factor (cos φ)</span>
-                  <div className="text-xl font-black text-indigo-300">{metrics.powerFactor}</div>
-                  <div className="text-[9px] text-emerald-400 mt-1">Grid Compliance ✓</div>
+                <div className="rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/20 shadow-xs">
+                  <span className="text-[10px] text-slate-600 font-sans block font-medium">Power Factor (cos φ)</span>
+                  <div className="text-xl font-black text-slate-800">{metrics.powerFactor}</div>
+                  <div className={`text-[9px] mt-1 ${isEsp32Connected ? 'text-emerald-700 font-medium' : 'text-slate-500'}`}>
+                    {isEsp32Connected ? 'Grid Compliance ✓' : 'Awaiting Telemetry'}
+                  </div>
                 </div>
               </div>
 
               {/* Quick ESP32 Commands */}
-              <div className="pt-2 border-t border-[#1a365d] space-y-2">
-                <span className="text-[11px] font-semibold text-slate-400 block font-sans">
+              <div className="pt-2 border-t border-[#C59B46]/20 space-y-2">
+                <span className="text-[11px] font-semibold text-slate-700 block font-sans">
                   Quick Microcontroller TX Commands:
                 </span>
                 <div className="grid grid-cols-3 gap-1.5 text-[10px] font-mono">
                   <button
                     onClick={() => handleSendCommand('{"cmd":"PING"}')}
-                    className="rounded-lg bg-[#030b1e] border border-[#1a365d] p-1.5 text-slate-300 hover:bg-[#0a2046] hover:text-white"
+                    className="rounded-lg bg-[#FAF7F0] border border-slate-300 p-1.5 text-slate-800 hover:bg-slate-200"
                   >
                     PING (Status)
                   </button>
                   <button
                     onClick={() => handleSendCommand('{"cmd":"GET_DATA"}')}
-                    className="rounded-lg bg-[#030b1e] border border-[#1a365d] p-1.5 text-slate-300 hover:bg-[#0a2046] hover:text-white"
+                    className="rounded-lg bg-[#FAF7F0] border border-slate-300 p-1.5 text-slate-800 hover:bg-slate-200"
                   >
                     GET_DATA
                   </button>
                   <button
                     onClick={() => handleSendCommand('{"cmd":"RESET_ENERGY"}')}
-                    className="rounded-lg bg-[#030b1e] border border-[#1a365d] p-1.5 text-amber-300 hover:bg-[#0a2046]"
+                    className="rounded-lg bg-[#FAF7F0] border border-[#C59B46]/40 p-1.5 text-[#C59B46] font-bold hover:bg-amber-50"
                   >
                     RESET_KWH
                   </button>
@@ -833,11 +844,11 @@ void loop() {
 
           {/* Right Column: Interactive Web Serial Terminal Console */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="rounded-2xl border border-[#1a365d] bg-[#030b1e] p-5 shadow-xl space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
                 <div className="flex items-center gap-2">
-                  <Terminal className="h-4 w-4 text-emerald-400" />
-                  <h3 className="text-sm font-bold text-white font-mono">
+                  <Terminal className="h-4 w-4 text-[#164430]" />
+                  <h3 className="text-sm font-bold text-[#164430] font-mono">
                     ESP32 Serial Monitor (UART 115200)
                   </h3>
                 </div>
@@ -847,15 +858,15 @@ void loop() {
                     onClick={() => setIsLogPaused(!isLogPaused)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition-all ${
                       isLogPaused
-                        ? 'bg-amber-400 text-slate-950'
-                        : 'bg-[#081b3d] text-slate-300 hover:text-white border border-[#1a365d]'
+                        ? 'bg-[#C59B46] text-[#FAF7F0]'
+                        : 'bg-[#FAF7F0] text-slate-700 hover:text-slate-900 border border-slate-300'
                     }`}
                   >
                     {isLogPaused ? 'RESUME' : 'PAUSE'}
                   </button>
                   <button
                     onClick={clearSerialLog}
-                    className="p-1.5 rounded-lg bg-[#081b3d] text-slate-400 hover:text-rose-400 border border-[#1a365d]"
+                    className="p-1.5 rounded-lg bg-[#FAF7F0] text-slate-600 hover:text-rose-600 border border-slate-300"
                     title="Clear Terminal Output"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -866,21 +877,21 @@ void loop() {
                       setCopiedLog(true);
                       setTimeout(() => setCopiedLog(false), 2000);
                     }}
-                    className="p-1.5 rounded-lg bg-[#081b3d] text-slate-400 hover:text-white border border-[#1a365d]"
+                    className="p-1.5 rounded-lg bg-[#FAF7F0] text-slate-600 hover:text-slate-900 border border-slate-300"
                     title="Copy All Log Entries"
                   >
-                    {copiedLog ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                    {copiedLog ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
               {/* Terminal Screen */}
-              <div className="h-96 w-full rounded-xl bg-black/80 border border-[#1a365d] p-3 font-mono text-[11px] text-emerald-400 overflow-y-auto space-y-1 shadow-inner leading-relaxed">
+              <div className="h-96 w-full rounded-xl bg-[#0c1a14] border border-[#C59B46]/30 p-3 font-mono text-[11px] text-emerald-400 overflow-y-auto space-y-1 shadow-inner leading-relaxed">
                 {serialLog.length === 0 ? (
-                  <div className="text-slate-500 py-10 text-center font-sans">
-                    <Terminal className="h-8 w-8 mx-auto mb-2 opacity-40 text-slate-400" />
+                  <div className="text-slate-400 py-10 text-center font-sans">
+                    <Terminal className="h-8 w-8 mx-auto mb-2 opacity-50 text-emerald-500" />
                     <div>Serial terminal is ready. Click &quot;Connect USB Serial&quot; above to begin live RX/TX.</div>
-                    <div className="text-[10px] text-slate-600 mt-1">Accepts JSON payloads: {`{"watts": 740, "voltage": 230.2, "current": 3.22}`}</div>
+                    <div className="text-[10px] text-slate-500 mt-1">Accepts JSON payloads: {`{"watts": 740, "voltage": 230.2, "current": 3.22}`}</div>
                   </div>
                 ) : (
                   serialLog.map((line, idx) => {
@@ -896,7 +907,7 @@ void loop() {
                           isRx
                             ? 'text-sky-300'
                             : isTx
-                            ? 'text-amber-300 font-bold'
+                            ? 'text-[#C59B46] font-bold'
                             : isErr
                             ? 'text-rose-400 font-bold'
                             : isOk
@@ -925,12 +936,12 @@ void loop() {
                   value={customCommand}
                   onChange={(e) => setCustomCommand(e.target.value)}
                   placeholder='e.g. {"cmd": "RELAY", "relay": 1, "state": "ON"}'
-                  className="flex-1 rounded-xl bg-[#081b3d] border border-[#1a365d] px-3.5 py-2 text-xs font-mono text-white focus:outline-none focus:border-sky-400"
+                  className="flex-1 rounded-xl bg-[#FAF7F0] border border-slate-300 px-3.5 py-2 text-xs font-mono text-slate-900 focus:outline-none focus:border-[#C59B46]"
                   id="esp32-tx-command-input"
                 />
                 <button
                   type="submit"
-                  className="flex items-center gap-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 px-4 py-2 text-xs font-bold text-slate-950 shadow transition-all"
+                  className="flex items-center gap-1.5 rounded-xl bg-[#164430] hover:bg-[#1e583e] px-4 py-2 text-xs font-bold text-[#FAF7F0] shadow-md transition-all"
                   id="esp32-send-command-btn"
                 >
                   <Send className="h-3.5 w-3.5" />
@@ -946,57 +957,57 @@ void loop() {
       {activeSubTab === 'wifi_ws' && (
         <div className="grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Wifi className="h-4 w-4 text-sky-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+                <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                  <Wifi className="h-4 w-4 text-[#C59B46]" />
                   <span>ESP32 AsyncWebSocket Client</span>
                 </h3>
-                <span className="text-[10px] text-emerald-400 font-mono">Zero-Cloud Local LAN</span>
+                <span className="text-[10px] text-emerald-700 font-mono font-bold">Zero-Cloud Local LAN</span>
               </div>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">ESP32 Static / DHCP IP Address:</label>
+                  <label className="text-slate-700 font-semibold block mb-1">ESP32 Static / DHCP IP Address:</label>
                   <input
                     type="text"
                     value={esp32Ip}
                     onChange={(e) => setEsp32Ip(e.target.value)}
                     placeholder="192.168.1.184"
-                    className="w-full rounded-xl bg-[#030b1e] border border-[#1a365d] p-2.5 font-mono text-white text-xs"
+                    className="w-full rounded-xl bg-[#FAF7F0] border border-slate-300 p-2.5 font-mono text-slate-900 text-xs focus:outline-none focus:border-[#C59B46]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-slate-300 font-semibold block mb-1">WebSocket Port:</label>
+                    <label className="text-slate-700 font-semibold block mb-1">WebSocket Port:</label>
                     <input
                       type="number"
                       value={wsPort}
                       onChange={(e) => setWsPort(Number(e.target.value))}
-                      className="w-full rounded-xl bg-[#030b1e] border border-[#1a365d] p-2.5 font-mono text-white text-xs"
+                      className="w-full rounded-xl bg-[#FAF7F0] border border-slate-300 p-2.5 font-mono text-slate-900 text-xs focus:outline-none focus:border-[#C59B46]"
                     />
                   </div>
                   <div>
-                    <label className="text-slate-300 font-semibold block mb-1">Endpoint URI:</label>
+                    <label className="text-slate-700 font-semibold block mb-1">Endpoint URI:</label>
                     <input
                       type="text"
                       value={wsEndpoint}
                       onChange={(e) => setWsEndpoint(e.target.value)}
                       placeholder="/ws"
-                      className="w-full rounded-xl bg-[#030b1e] border border-[#1a365d] p-2.5 font-mono text-white text-xs"
+                      className="w-full rounded-xl bg-[#FAF7F0] border border-slate-300 p-2.5 font-mono text-slate-900 text-xs focus:outline-none focus:border-[#C59B46]"
                     />
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d] text-xs space-y-1">
+                <div className="rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/20 text-xs space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Target WebSocket URL:</span>
-                    <span className="text-amber-300 font-mono font-bold">ws://{esp32Ip}:{wsPort}{wsEndpoint}</span>
+                    <span className="text-slate-600">Target WebSocket URL:</span>
+                    <span className="text-[#C59B46] font-mono font-bold">ws://{esp32Ip}:{wsPort}{wsEndpoint}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Connection Status:</span>
-                    <span className={`font-bold capitalize ${wsStatus === 'connected' ? 'text-emerald-400' : wsStatus === 'connecting' ? 'text-amber-400' : 'text-slate-400'}`}>
+                    <span className="text-slate-600">Connection Status:</span>
+                    <span className={`font-bold capitalize ${wsStatus === 'connected' ? 'text-emerald-700' : wsStatus === 'connecting' ? 'text-amber-600' : 'text-slate-500'}`}>
                       {wsStatus}
                     </span>
                   </div>
@@ -1004,10 +1015,10 @@ void loop() {
 
                 <button
                   onClick={handleConnectWs}
-                  className={`w-full rounded-xl p-3 text-xs font-black shadow-lg transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full rounded-xl p-3 text-xs font-black shadow-md transition-all flex items-center justify-center gap-2 ${
                     wsStatus === 'connected'
-                      ? 'bg-rose-500 hover:bg-rose-600 text-white'
-                      : 'bg-gradient-to-r from-sky-400 to-blue-600 text-slate-950 hover:opacity-90'
+                      ? 'bg-rose-600 hover:bg-rose-700 text-white'
+                      : 'bg-[#164430] hover:bg-[#1e583e] text-[#FAF7F0]'
                   }`}
                 >
                   <Wifi className="h-4 w-4" />
@@ -1016,47 +1027,47 @@ void loop() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[#1a365d] bg-[#030b1e] p-4 text-xs space-y-2 text-slate-300">
-              <div className="font-bold text-white flex items-center gap-1.5">
-                <Laptop className="h-4 w-4 text-amber-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-4 text-xs space-y-2 text-slate-700 shadow-sm">
+              <div className="font-bold text-[#164430] flex items-center gap-1.5">
+                <Laptop className="h-4 w-4 text-[#C59B46]" />
                 <span>How to use Local WebSocket Mode:</span>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600">
                 1. Flash the <strong>ESPAsyncWebServer</strong> sketch onto your ESP32.
               </p>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600">
                 2. Note the ESP32 IP address printed on your Arduino serial monitor.
               </p>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600">
                 3. Ensure both your computer and ESP32 are connected to the same WiFi router.
               </p>
             </div>
           </div>
 
           <div className="lg:col-span-7 space-y-4">
-            <div className="rounded-2xl border border-[#1a365d] bg-[#030b1e] p-5 shadow-xl space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-                <h3 className="text-sm font-bold text-white font-mono flex items-center gap-2">
-                  <Terminal className="h-4 w-4 text-sky-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+                <h3 className="text-sm font-bold text-[#164430] font-mono flex items-center gap-2">
+                  <Terminal className="h-4 w-4 text-[#164430]" />
                   <span>WebSocket Packet Stream (ws://{esp32Ip}:{wsPort}{wsEndpoint})</span>
                 </h3>
                 <button
                   onClick={() => setWsLog([])}
-                  className="p-1 rounded bg-[#081b3d] text-slate-400 hover:text-rose-400 border border-[#1a365d]"
+                  className="p-1.5 rounded-lg bg-[#FAF7F0] text-slate-600 hover:text-rose-600 border border-slate-300"
                   title="Clear Log"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
 
-              <div className="h-80 w-full rounded-xl bg-black/80 border border-[#1a365d] p-3 font-mono text-[11px] text-sky-300 overflow-y-auto space-y-1 shadow-inner">
+              <div className="h-80 w-full rounded-xl bg-[#0c1a14] border border-[#C59B46]/30 p-3 font-mono text-[11px] text-emerald-400 overflow-y-auto space-y-1 shadow-inner">
                 {wsLog.length === 0 ? (
-                  <div className="text-slate-500 py-12 text-center font-sans">
+                  <div className="text-slate-400 py-12 text-center font-sans">
                     Awaiting WebSocket connection. Enter your ESP32 IP on the left and click Connect.
                   </div>
                 ) : (
                   wsLog.map((line, idx) => (
-                    <div key={idx} className={line.includes('RX:') ? 'text-sky-300' : line.includes('TX') ? 'text-amber-300 font-bold' : 'text-slate-400'}>
+                    <div key={idx} className={line.includes('RX:') ? 'text-sky-300' : line.includes('TX') ? 'text-[#C59B46] font-bold' : 'text-slate-300'}>
                       {line}
                     </div>
                   ))
@@ -1071,43 +1082,43 @@ void loop() {
       {activeSubTab === 'mqtt' && (
         <div className="grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-6 space-y-6">
-            <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Cloud className="h-4 w-4 text-sky-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+                <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                  <Cloud className="h-4 w-4 text-[#C59B46]" />
                   <span>TNEB SCADA MQTT Telemetry Bridge</span>
                 </h3>
-                <span className="text-[10px] text-sky-300 font-mono">QoS 0/1 PubSub</span>
+                <span className="text-[10px] text-emerald-700 font-mono font-bold">QoS 0/1 PubSub</span>
               </div>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">WebSocket MQTT Broker URL:</label>
+                  <label className="text-slate-700 font-semibold block mb-1">WebSocket MQTT Broker URL:</label>
                   <input
                     type="text"
                     value={mqttBrokerWs}
                     onChange={(e) => setMqttBrokerWs(e.target.value)}
-                    className="w-full rounded-xl bg-[#030b1e] border border-[#1a365d] p-2.5 font-mono text-white text-xs"
+                    className="w-full rounded-xl bg-[#FAF7F0] border border-slate-300 p-2.5 font-mono text-slate-900 text-xs focus:outline-none focus:border-[#C59B46]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Telemetry Subscribe Topic:</label>
+                  <label className="text-slate-700 font-semibold block mb-1">Telemetry Subscribe Topic:</label>
                   <input
                     type="text"
                     value={mqttTopic}
                     onChange={(e) => setMqttTopic(e.target.value)}
-                    className="w-full rounded-xl bg-[#030b1e] border border-[#1a365d] p-2.5 font-mono text-amber-300 text-xs font-bold"
+                    className="w-full rounded-xl bg-[#FAF7F0] border border-slate-300 p-2.5 font-mono text-[#C59B46] text-xs font-bold focus:outline-none focus:border-[#C59B46]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Remote Command Publish Topic:</label>
+                  <label className="text-slate-700 font-semibold block mb-1">Remote Command Publish Topic:</label>
                   <input
                     type="text"
                     value={mqttCmdTopic}
                     onChange={(e) => setMqttCmdTopic(e.target.value)}
-                    className="w-full rounded-xl bg-[#030b1e] border border-[#1a365d] p-2.5 font-mono text-sky-300 text-xs"
+                    className="w-full rounded-xl bg-[#FAF7F0] border border-slate-300 p-2.5 font-mono text-[#164430] text-xs focus:outline-none focus:border-[#C59B46]"
                   />
                 </div>
 
@@ -1121,7 +1132,7 @@ void loop() {
                         ...prev,
                       ]);
                     }}
-                    className="rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 p-2.5 text-xs font-black text-slate-950 shadow"
+                    className="rounded-xl bg-[#164430] hover:bg-[#1e583e] p-2.5 text-xs font-black text-[#FAF7F0] shadow-md transition-all"
                   >
                     Subscribe to MQTT
                   </button>
@@ -1131,7 +1142,7 @@ void loop() {
                       setMqttStatus('disconnected');
                       setMqttLog((prev) => [`[${new Date().toLocaleTimeString()}] MQTT Disconnected.`, ...prev]);
                     }}
-                    className="rounded-xl border border-[#1a365d] bg-[#030b1e] p-2.5 text-xs font-bold text-slate-300 hover:text-white"
+                    className="rounded-xl border border-slate-300 bg-white p-2.5 text-xs font-bold text-slate-700 hover:text-slate-900 shadow-xs"
                   >
                     Disconnect
                   </button>
@@ -1141,20 +1152,20 @@ void loop() {
           </div>
 
           <div className="lg:col-span-6 space-y-4">
-            <div className="rounded-2xl border border-[#1a365d] bg-[#030b1e] p-5 shadow-xl space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-                <h3 className="text-sm font-bold text-white font-mono flex items-center gap-2">
-                  <Server className="h-4 w-4 text-emerald-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+                <h3 className="text-sm font-bold text-[#164430] font-mono flex items-center gap-2">
+                  <Server className="h-4 w-4 text-[#164430]" />
                   <span>MQTT Broker Activity Log</span>
                 </h3>
-                <span className="text-[10px] text-slate-400 font-mono">
-                  Status: <strong className={mqttStatus === 'connected' ? 'text-emerald-400' : 'text-slate-500'}>{mqttStatus}</strong>
+                <span className="text-[10px] text-slate-500 font-mono">
+                  Status: <strong className={mqttStatus === 'connected' ? 'text-emerald-700 font-bold' : 'text-slate-500'}>{mqttStatus}</strong>
                 </span>
               </div>
 
-              <div className="h-72 w-full rounded-xl bg-black/80 border border-[#1a365d] p-3 font-mono text-[11px] text-emerald-300 overflow-y-auto space-y-1 shadow-inner">
+              <div className="h-72 w-full rounded-xl bg-[#0c1a14] border border-[#C59B46]/30 p-3 font-mono text-[11px] text-emerald-400 overflow-y-auto space-y-1 shadow-inner">
                 {mqttLog.length === 0 ? (
-                  <div className="text-slate-500 py-10 text-center font-sans">
+                  <div className="text-slate-400 py-10 text-center font-sans">
                     Click &quot;Subscribe to MQTT&quot; to connect to the TNEB telemetry feed.
                   </div>
                 ) : (
@@ -1173,14 +1184,14 @@ void loop() {
       {/* TAB 4: ARDUINO & ESP-IDF C++ FIRMWARE CODE */}
       {activeSubTab === 'firmware' && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#1a365d]">
+          <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#C59B46]/20">
               <div>
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Code className="h-4 w-4 text-amber-400" />
+                <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                  <Code className="h-4 w-4 text-[#C59B46]" />
                   <span>Production Arduino / ESP-IDF C++ Firmware Source</span>
                 </h3>
-                <p className="text-xs text-slate-300 mt-0.5">
+                <p className="text-xs text-slate-600 mt-0.5">
                   Flash ready firmware for ESP32-WROOM-32 with auto JSON serialization and error recovery.
                 </p>
               </div>
@@ -1188,19 +1199,19 @@ void loop() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleCopyCode(currentCode)}
-                  className="flex items-center gap-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 px-3.5 py-2 text-xs font-bold text-slate-950 shadow transition-all"
+                  className="flex items-center gap-1.5 rounded-xl bg-[#164430] hover:bg-[#1e583e] px-3.5 py-2 text-xs font-bold text-[#FAF7F0] shadow-md transition-all"
                   id="copy-firmware-btn"
                 >
-                  {copiedCode ? <CheckCircle2 className="h-4 w-4 text-emerald-950" /> : <Copy className="h-4 w-4" />}
+                  {copiedCode ? <CheckCircle2 className="h-4 w-4 text-[#C59B46]" /> : <Copy className="h-4 w-4" />}
                   <span>{copiedCode ? 'Code Copied!' : 'Copy Code'}</span>
                 </button>
 
                 <button
                   onClick={() => handleDownloadIno(currentFilename, currentCode)}
-                  className="flex items-center gap-1.5 rounded-xl border border-[#1a365d] bg-[#030b1e] hover:bg-[#0a2046] px-3.5 py-2 text-xs font-bold text-slate-200 transition-all"
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-[#FAF7F0] hover:bg-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 transition-all shadow-xs"
                   id="download-firmware-btn"
                 >
-                  <Download className="h-4 w-4 text-amber-400" />
+                  <Download className="h-4 w-4 text-[#C59B46]" />
                   <span>Download .ino</span>
                 </button>
               </div>
@@ -1220,60 +1231,60 @@ void loop() {
                   onClick={() => setFirmwareType(fw.id as any)}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     firmwareType === fw.id
-                      ? 'border-amber-400 bg-amber-400/20 text-white font-bold shadow'
-                      : 'border-[#1a365d] bg-[#030b1e] text-slate-400 hover:text-white'
+                      ? 'border-[#C59B46] bg-[#FAF7F0] text-[#164430] font-bold shadow-xs'
+                      : 'border-slate-200 bg-white text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <div className="text-xs font-bold flex items-center gap-1.5">
-                    <fw.icon className="h-3.5 w-3.5 text-amber-300" />
+                    <fw.icon className={`h-3.5 w-3.5 ${firmwareType === fw.id ? 'text-[#C59B46]' : 'text-slate-500'}`} />
                     <span>{fw.label}</span>
                   </div>
-                  <div className="text-[10px] text-slate-400 mt-1">{fw.sub}</div>
+                  <div className="text-[10px] text-slate-500 mt-1">{fw.sub}</div>
                 </button>
               ))}
             </div>
 
             {/* WiFi Credentials In-Sketch Customizer */}
-            <div className="rounded-xl bg-[#030b1e] p-3 border border-[#1a365d] grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/20 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
-                <label className="text-slate-400 font-semibold block mb-1">Your WiFi SSID (Injected into C++ code):</label>
+                <label className="text-slate-700 font-semibold block mb-1">Your WiFi SSID (Injected into C++ code):</label>
                 <input
                   type="text"
                   value={wifiSsid}
                   onChange={(e) => setWifiSsid(e.target.value)}
-                  className="w-full rounded-lg bg-[#081b3d] border border-[#1a365d] p-2 text-white font-mono"
+                  className="w-full rounded-lg bg-white border border-slate-300 p-2 text-slate-900 font-mono focus:outline-none focus:border-[#C59B46]"
                 />
               </div>
               <div>
-                <label className="text-slate-400 font-semibold block mb-1">Your WiFi Password:</label>
+                <label className="text-slate-700 font-semibold block mb-1">Your WiFi Password:</label>
                 <input
                   type="text"
                   value={wifiPass}
                   onChange={(e) => setWifiPass(e.target.value)}
-                  className="w-full rounded-lg bg-[#081b3d] border border-[#1a365d] p-2 text-white font-mono"
+                  className="w-full rounded-lg bg-white border border-slate-300 p-2 text-slate-900 font-mono focus:outline-none focus:border-[#C59B46]"
                 />
               </div>
             </div>
 
             {/* Code Viewer */}
-            <div className="relative rounded-xl border border-[#1a365d] bg-slate-950 p-4 font-mono text-xs text-slate-200 overflow-x-auto max-h-[500px] leading-relaxed shadow-inner">
+            <div className="relative rounded-xl border border-[#C59B46]/30 bg-[#0c1a14] p-4 font-mono text-xs text-emerald-300 overflow-x-auto max-h-[500px] leading-relaxed shadow-inner">
               <pre>{currentCode}</pre>
             </div>
 
             {/* Arduino IDE Libraries Checklist */}
-            <div className="rounded-xl bg-[#030b1e] p-4 border border-[#1a365d] text-xs space-y-2">
-              <span className="font-bold text-white block">Required Arduino IDE Libraries:</span>
+            <div className="rounded-xl bg-[#FAF7F0] p-4 border border-[#C59B46]/20 text-xs space-y-2">
+              <span className="font-bold text-[#164430] block">Required Arduino IDE Libraries:</span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-[11px]">
-                <div className="p-2 rounded bg-[#081b3d] border border-[#1a365d] text-sky-300">
+                <div className="p-2 rounded bg-white border border-slate-200 text-[#164430] font-semibold">
                   ✓ ArduinoJson (v6.x)
                 </div>
-                <div className="p-2 rounded bg-[#081b3d] border border-[#1a365d] text-sky-300">
+                <div className="p-2 rounded bg-white border border-slate-200 text-[#164430] font-semibold">
                   ✓ PZEM004Tv30 (by mandulaj)
                 </div>
-                <div className="p-2 rounded bg-[#081b3d] border border-[#1a365d] text-sky-300">
+                <div className="p-2 rounded bg-white border border-slate-200 text-[#164430] font-semibold">
                   ✓ EmonLib (OpenEnergy)
                 </div>
-                <div className="p-2 rounded bg-[#081b3d] border border-[#1a365d] text-sky-300">
+                <div className="p-2 rounded bg-white border border-slate-200 text-[#164430] font-semibold">
                   ✓ PubSubClient / AsyncTCP
                 </div>
               </div>
@@ -1285,13 +1296,13 @@ void loop() {
       {/* TAB 5: PINOUT & CIRCUIT SCHEMATICS */}
       {activeSubTab === 'wiring' && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-5">
-            <div className="pb-2 border-b border-[#1a365d]">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Layers className="h-4 w-4 text-amber-400" />
+          <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-5">
+            <div className="pb-2 border-b border-[#C59B46]/20">
+              <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                <Layers className="h-4 w-4 text-[#C59B46]" />
                 <span>ESP32-WROOM-32 Pinout & Sensor Wiring Interfacing</span>
               </h3>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs text-slate-600 mt-0.5">
                 Schematic connections for PZEM-004T v3.0, SCT-013 CT Sensor, ZMPT101B Voltage Transformer, and Relay Board.
               </p>
             </div>
@@ -1299,88 +1310,88 @@ void loop() {
             {/* Pin Interfacing Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 text-xs">
               {/* Card 1: PZEM-004T UART */}
-              <div className="rounded-xl border border-sky-500/30 bg-[#030b1e] p-4 space-y-3">
-                <div className="flex items-center gap-2 font-bold text-sky-300">
-                  <Zap className="h-4 w-4" />
+              <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-4 space-y-3">
+                <div className="flex items-center gap-2 font-bold text-[#164430]">
+                  <Zap className="h-4 w-4 text-[#C59B46]" />
                   <span>1. PZEM-004T v3.0 Module</span>
                 </div>
                 <div className="space-y-1.5 font-mono text-[11px]">
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">PZEM TX Pin</span>
-                    <span className="text-amber-300 font-bold">➔ ESP32 GPIO 16 (RX2)</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">PZEM TX Pin</span>
+                    <span className="text-[#164430] font-bold">➔ ESP32 GPIO 16 (RX2)</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">PZEM RX Pin</span>
-                    <span className="text-amber-300 font-bold">➔ ESP32 GPIO 17 (TX2)</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">PZEM RX Pin</span>
+                    <span className="text-[#164430] font-bold">➔ ESP32 GPIO 17 (TX2)</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">PZEM 5V VCC</span>
-                    <span className="text-rose-400 font-bold">➔ ESP32 VIN (5V)</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">PZEM 5V VCC</span>
+                    <span className="text-rose-600 font-bold">➔ ESP32 VIN (5V)</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">PZEM GND</span>
-                    <span className="text-slate-300 font-bold">➔ ESP32 Common GND</span>
+                    <span className="text-slate-600">PZEM GND</span>
+                    <span className="text-slate-800 font-bold">➔ ESP32 Common GND</span>
                   </div>
                 </div>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[10px] text-slate-600">
                   Connect AC Live & Neutral to PZEM screw terminals. Clamp the 100A CT around the main Phase cable.
                 </p>
               </div>
 
               {/* Card 2: SCT-013 CT Sensor */}
-              <div className="rounded-xl border border-amber-500/30 bg-[#030b1e] p-4 space-y-3">
-                <div className="flex items-center gap-2 font-bold text-amber-300">
-                  <Activity className="h-4 w-4" />
+              <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-4 space-y-3">
+                <div className="flex items-center gap-2 font-bold text-[#164430]">
+                  <Activity className="h-4 w-4 text-[#C59B46]" />
                   <span>2. SCT-013-000 CT Sensor</span>
                 </div>
                 <div className="space-y-1.5 font-mono text-[11px]">
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">Signal Input</span>
-                    <span className="text-amber-300 font-bold">➔ GPIO 34 (ADC1_CH6)</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">Signal Input</span>
+                    <span className="text-[#164430] font-bold">➔ GPIO 34 (ADC1_CH6)</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">Burden Resistor</span>
-                    <span className="text-emerald-400">33 Ω / 1% Precision</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">Burden Resistor</span>
+                    <span className="text-emerald-700 font-semibold">33 Ω / 1% Precision</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">Bias Divider</span>
-                    <span className="text-slate-300">2x 10kΩ (3.3V to GND)</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">Bias Divider</span>
+                    <span className="text-slate-700">2x 10kΩ (3.3V to GND)</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">DC Filter Cap</span>
-                    <span className="text-sky-300">10 µF Electrolytic</span>
+                    <span className="text-slate-600">DC Filter Cap</span>
+                    <span className="text-[#C59B46] font-bold">10 µF Electrolytic</span>
                   </div>
                 </div>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[10px] text-slate-600">
                   Shifts AC sinusoidal waveform to 1.65V DC center reference for ESP32 12-bit ADC sampling.
                 </p>
               </div>
 
               {/* Card 3: 4-Channel Relay */}
-              <div className="rounded-xl border border-emerald-500/30 bg-[#030b1e] p-4 space-y-3">
-                <div className="flex items-center gap-2 font-bold text-emerald-400">
-                  <Sliders className="h-4 w-4" />
+              <div className="rounded-xl border border-[#C59B46]/30 bg-[#FAF7F0] p-4 space-y-3">
+                <div className="flex items-center gap-2 font-bold text-[#164430]">
+                  <Sliders className="h-4 w-4 text-[#C59B46]" />
                   <span>3. 4-Channel 5V Relay Board</span>
                 </div>
                 <div className="space-y-1.5 font-mono text-[11px]">
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">Relay 1 (AC/Geyser)</span>
-                    <span className="text-amber-300">➔ GPIO 18</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">Relay 1 (AC/Geyser)</span>
+                    <span className="text-[#164430] font-bold">➔ GPIO 18</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">Relay 2 (Water Pump)</span>
-                    <span className="text-amber-300">➔ GPIO 19</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">Relay 2 (Water Pump)</span>
+                    <span className="text-[#164430] font-bold">➔ GPIO 19</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#1a365d] pb-1">
-                    <span className="text-slate-400">Relay 3 (EV Charger)</span>
-                    <span className="text-amber-300">➔ GPIO 21</span>
+                  <div className="flex justify-between border-b border-slate-200 pb-1">
+                    <span className="text-slate-600">Relay 3 (EV Charger)</span>
+                    <span className="text-[#164430] font-bold">➔ GPIO 21</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Relay 4 (Main Incomer)</span>
-                    <span className="text-amber-300">➔ GPIO 22</span>
+                    <span className="text-slate-600">Relay 4 (Main Incomer)</span>
+                    <span className="text-[#164430] font-bold">➔ GPIO 22</span>
                   </div>
                 </div>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[10px] text-slate-600">
                   Optocoupler isolated 5V relay inputs powered from external 5V/2A power supply.
                 </p>
               </div>
@@ -1394,13 +1405,13 @@ void loop() {
         <div className="grid gap-6 lg:grid-cols-12">
           {/* Left: Remote Relay Switchboard */}
           <div className="lg:col-span-6 space-y-6">
-            <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <SlidersHorizontal className="h-4 w-4 text-emerald-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+                <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                  <SlidersHorizontal className="h-4 w-4 text-[#C59B46]" />
                   <span>Remote ESP32 Load Shedding Relay Actuators</span>
                 </h3>
-                <span className="text-[10px] text-sky-300 font-mono">GPIO 18, 19, 21, 22</span>
+                <span className="text-[10px] text-[#164430] font-mono font-bold">GPIO 18, 19, 21, 22</span>
               </div>
 
               <div className="space-y-3">
@@ -1416,30 +1427,30 @@ void loop() {
                       key={relay.id}
                       className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
                         isOn
-                          ? 'border-emerald-500/40 bg-emerald-500/10'
-                          : 'border-[#1a365d] bg-[#030b1e] opacity-75'
+                          ? 'border-emerald-300 bg-emerald-50/80 shadow-xs'
+                          : 'border-slate-200 bg-[#FAF7F0] opacity-80'
                       }`}
                     >
                       <div>
-                        <div className="text-xs font-bold text-white flex items-center gap-2">
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
                           <span
                             className={`h-2.5 w-2.5 rounded-full ${
-                              isOn ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'
+                              isOn ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'
                             }`}
                           />
                           <span>{relay.name}</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        <div className="text-[10px] text-slate-500 font-mono mt-0.5">
                           {relay.gpio} • Nominal Load: {relay.load}
                         </div>
                       </div>
 
                       <button
                         onClick={() => handleToggleRelay(relay.id)}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold font-mono transition-all ${
+                        className={`px-4 py-1.5 rounded-lg text-xs font-bold font-mono transition-all shadow-xs ${
                           isOn
-                            ? 'bg-emerald-500 text-slate-950 shadow-md font-black hover:bg-emerald-400'
-                            : 'bg-[#081b3d] text-slate-300 hover:text-white border border-[#1a365d]'
+                            ? 'bg-emerald-700 text-white font-black hover:bg-emerald-800'
+                            : 'bg-white text-slate-700 hover:text-slate-900 border border-slate-300'
                         }`}
                       >
                         {isOn ? 'ENERGIZED (ON)' : 'TRIPPED (OFF)'}
@@ -1453,21 +1464,21 @@ void loop() {
 
           {/* Right: Sensor Fine-Tuning Calibration */}
           <div className="lg:col-span-6 space-y-6">
-            <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-amber-400" />
+            <div className="rounded-2xl border border-[#C59B46]/30 bg-white p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[#C59B46]/20">
+                <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-[#C59B46]" />
                   <span>ADC Calibration Fine-Tuning</span>
                 </h3>
-                <span className="text-[10px] text-slate-400 font-mono">TNEB Substation Benchmark</span>
+                <span className="text-[10px] text-slate-500 font-mono">TNEB Substation Benchmark</span>
               </div>
 
               <div className="space-y-4 text-xs">
                 {/* Voltage Multiplier */}
-                <div className="rounded-xl bg-[#030b1e] p-3.5 border border-[#1a365d] space-y-2">
+                <div className="rounded-xl bg-[#FAF7F0] p-3.5 border border-[#C59B46]/20 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-300 font-semibold">Voltage Multiplier Gain:</span>
-                    <span className="font-mono text-amber-300 font-bold">{voltageCalibrationFactor.toFixed(2)}x</span>
+                    <span className="text-slate-700 font-semibold">Voltage Multiplier Gain:</span>
+                    <span className="font-mono text-[#C59B46] font-bold">{voltageCalibrationFactor.toFixed(2)}x</span>
                   </div>
                   <input
                     type="range"
@@ -1476,9 +1487,9 @@ void loop() {
                     step="0.01"
                     value={voltageCalibrationFactor}
                     onChange={(e) => setVoltageCalibrationFactor(Number(e.target.value))}
-                    className="w-full accent-amber-400 cursor-pointer h-2 rounded bg-slate-800"
+                    className="w-full accent-[#C59B46] cursor-pointer h-2 rounded bg-slate-200"
                   />
-                  <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                  <div className="flex justify-between text-[10px] text-slate-500 font-mono">
                     <span>-20% Scale</span>
                     <span>1.00x Nominal</span>
                     <span>+20% Scale</span>
@@ -1486,10 +1497,10 @@ void loop() {
                 </div>
 
                 {/* Current Offset */}
-                <div className="rounded-xl bg-[#030b1e] p-3.5 border border-[#1a365d] space-y-2">
+                <div className="rounded-xl bg-[#FAF7F0] p-3.5 border border-[#C59B46]/20 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-300 font-semibold">Current Zero-Offset Offset (CT Noise Cancellation):</span>
-                    <span className="font-mono text-sky-300 font-bold">{currentCalibrationOffset.toFixed(2)} A</span>
+                    <span className="text-slate-700 font-semibold">Current Zero-Offset Offset (CT Noise Cancellation):</span>
+                    <span className="font-mono text-[#164430] font-bold">{currentCalibrationOffset.toFixed(2)} A</span>
                   </div>
                   <input
                     type="range"
@@ -1498,9 +1509,9 @@ void loop() {
                     step="0.02"
                     value={currentCalibrationOffset}
                     onChange={(e) => setCurrentCalibrationOffset(Number(e.target.value))}
-                    className="w-full accent-sky-400 cursor-pointer h-2 rounded bg-slate-800"
+                    className="w-full accent-[#164430] cursor-pointer h-2 rounded bg-slate-200"
                   />
-                  <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                  <div className="flex justify-between text-[10px] text-slate-500 font-mono">
                     <span>-0.50A (Suppress Noise)</span>
                     <span>0.00A</span>
                     <span>+0.50A</span>
@@ -1509,16 +1520,18 @@ void loop() {
 
                 <button
                   onClick={() => {
-                    handleSendCommand(
-                      JSON.stringify({
-                        cmd: 'CALIBRATE',
-                        v_gain: voltageCalibrationFactor,
-                        i_offset: currentCalibrationOffset,
-                      })
-                    );
-                    alert('Calibration factors saved to ESP32 EEPROM / NVS non-volatile flash.');
+                    const cmd = JSON.stringify({
+                      cmd: 'CALIBRATE',
+                      v_gain: voltageCalibrationFactor,
+                      i_offset: currentCalibrationOffset,
+                    });
+                    handleSendCommand(cmd);
+                    setWsLog((prev) => [
+                      `[${new Date().toLocaleTimeString()}] Calibration saved: Gain=${voltageCalibrationFactor.toFixed(2)} Offset=${currentCalibrationOffset.toFixed(2)}A`,
+                      ...prev.slice(0, 99),
+                    ]);
                   }}
-                  className="w-full rounded-xl bg-gradient-to-r from-amber-400 to-sky-500 hover:from-amber-300 hover:to-sky-400 p-3 text-xs font-black text-slate-950 shadow-lg transition-all"
+                  className="w-full rounded-xl bg-[#164430] hover:bg-[#1e583e] p-3 text-xs font-black text-[#FAF7F0] shadow-md transition-all"
                 >
                   Flash Calibration Factors to ESP32 EEPROM
                 </button>

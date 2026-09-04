@@ -97,84 +97,84 @@ export const DashboardOverview: React.FC = () => {
     }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-slate-800">
       {/* Official TNEB Substation & Consumer Live Telemetry Header Banner */}
-      <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-r from-[#081b3d] via-[#09224f] to-[#040e24] p-4 sm:p-5 shadow-lg">
+      <div className="rounded-2xl border-2 border-[#C59B46]/60 bg-white/95 p-4 sm:p-5 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-start sm:items-center gap-3">
-            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-sky-600 text-slate-950 shadow-md font-black">
-              <Zap className="h-6 w-6 text-slate-950" />
+            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#164430] text-[#C59B46] shadow-sm font-black border border-[#C59B46]/40">
+              <Zap className="h-6 w-6" />
               <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400"></span>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75"></span>
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
               </span>
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-base sm:text-lg font-black tracking-tight text-white">
+                <h2 className="text-base sm:text-lg font-black tracking-tight text-[#164430]">
                   TNEB Smart Meter Console (LT Tariff 1A)
                 </h2>
-                <span className="rounded bg-sky-500/20 px-2 py-0.5 text-[10px] font-bold text-sky-300 border border-sky-500/30">
+                <span className="rounded-lg bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-800 border border-emerald-300">
                   {userProfile?.serviceConnectionType || userProfile?.phaseType || '3-Phase LT Domestic'}
                 </span>
-                <span className="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30">
+                <span className="rounded-lg bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-800 border border-amber-300">
                   100 Free Units Active ✓
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Consumer: <strong className="text-white">{userProfile?.fullName || userProfile?.name || 'Er. S. Thirumurugan'}</strong> • No: <strong className="text-amber-300 font-mono">{userProfile?.consumerNumber || '09-245-014-1082'}</strong> • Section: <strong className="text-sky-200">{userProfile?.sectionOffice || 'Guindy'}</strong> ({userProfile?.distributionCircle || userProfile?.circle || 'Chennai South EDC'})
+              <p className="text-xs text-slate-600 mt-0.5">
+                Consumer: <strong className="text-slate-900">{userProfile?.fullName || userProfile?.name || 'Er. S. Thirumurugan'}</strong> • No: <strong className="text-[#164430] font-mono font-bold">{userProfile?.consumerNumber || '09-245-014-1082'}</strong> • Section: <strong className="text-slate-800">{userProfile?.sectionOffice || 'Guindy'}</strong> ({userProfile?.distributionCircle || userProfile?.circle || 'Chennai South EDC'})
               </p>
             </div>
           </div>
 
           {/* Substation & Feeder Electrical Health Badges */}
           <div className="flex flex-wrap items-center gap-2 text-xs font-mono-num">
-            <div className="rounded-lg bg-[#030b1e]/90 px-3 py-1.5 border border-[#1a365d]">
-              <span className="text-slate-400 text-[10px] block">Feeder Line</span>
-              <span className="font-bold text-sky-300">{userProfile?.distributionTransformer || userProfile?.transformerId || 'DT-GND-014'}</span>
+            <div className="rounded-lg bg-[#FAF7F0] px-3 py-1.5 border border-[#C59B46]/40">
+              <span className="text-slate-500 text-[10px] block font-medium">Feeder Line</span>
+              <span className="font-bold text-[#164430]">{userProfile?.distributionTransformer || userProfile?.transformerId || 'DT-GND-014'}</span>
             </div>
-            <div className="rounded-lg bg-[#030b1e]/90 px-3 py-1.5 border border-[#1a365d]">
-              <span className="text-slate-400 text-[10px] block">RMS Voltage</span>
-              <span className="font-bold text-white">{metrics.voltageVolts} V</span>
+            <div className="rounded-lg bg-[#FAF7F0] px-3 py-1.5 border border-[#C59B46]/40">
+              <span className="text-slate-500 text-[10px] block font-medium">RMS Voltage</span>
+              <span className="font-bold text-slate-900">{metrics.voltageVolts} V</span>
             </div>
-            <div className="rounded-lg bg-[#030b1e]/90 px-3 py-1.5 border border-[#1a365d]">
-              <span className="text-slate-400 text-[10px] block">Current / PF</span>
-              <span className="font-bold text-emerald-400">{metrics.currentAmps}A ({metrics.powerFactor})</span>
+            <div className="rounded-lg bg-[#FAF7F0] px-3 py-1.5 border border-[#C59B46]/40">
+              <span className="text-slate-500 text-[10px] block font-medium">Current / PF</span>
+              <span className="font-bold text-emerald-700">{metrics.currentAmps}A ({metrics.powerFactor})</span>
             </div>
-            <div className="rounded-lg bg-[#030b1e]/90 px-3 py-1.5 border border-[#1a365d] hidden sm:block">
-              <span className="text-slate-400 text-[10px] block">Grid Freq</span>
-              <span className="font-bold text-amber-300">{metrics.frequencyHz} Hz</span>
+            <div className="rounded-lg bg-[#FAF7F0] px-3 py-1.5 border border-[#C59B46]/40 hidden sm:block">
+              <span className="text-slate-500 text-[10px] block font-medium">Grid Freq</span>
+              <span className="font-bold text-[#C59B46]">{metrics.frequencyHz} Hz</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* ESP32 Hardware Integration Quick Connect Bar */}
-      <div className="rounded-2xl border border-sky-500/40 bg-gradient-to-r from-[#030b1e] via-[#071b3b] to-[#030b1e] p-4 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="rounded-2xl border-2 border-[#C59B46]/50 bg-white/95 p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold shadow ${
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold shadow-sm ${
             isEsp32Connected
-              ? 'bg-emerald-500 text-slate-950'
-              : 'bg-gradient-to-br from-amber-400 to-sky-500 text-slate-950'
+              ? 'bg-emerald-600 text-white'
+              : 'bg-[#164430] text-[#C59B46]'
           }`}>
             <Cpu className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+              <h3 className="text-sm font-black text-[#164430] flex items-center gap-1.5">
                 <span>ESP32 Physical Hardware Integration</span>
               </h3>
-              <span className={`rounded px-2 py-0.5 text-[10px] font-mono font-bold ${
+              <span className={`rounded-lg px-2 py-0.5 text-[10px] font-mono font-bold ${
                 isEsp32Connected
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                  : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                  : 'bg-rose-100 text-rose-800 border border-rose-300'
               }`}>
                 {isEsp32Connected
                   ? (isSerialConnected ? 'CONNECTED @ USB SERIAL' : isWifiConnected ? 'CONNECTED @ WIFI' : 'CONNECTED @ MQTT')
-                  : 'DISCONNECTED (NO FAKE TELEMETRY)'}
+                  : 'DISCONNECTED (STANDBY 0W)'}
               </span>
             </div>
-            <p className="text-xs text-slate-300 mt-0.5">
+            <p className="text-xs text-slate-600 mt-0.5">
               {isEsp32Connected
                 ? 'Streaming active measurements directly from your ESP32 + PZEM-004T / CT sensor module.'
                 : 'Hardware disconnected. Real values will stream once your physical ESP32 is connected via USB, WiFi, or MQTT.'}
@@ -185,23 +185,23 @@ export const DashboardOverview: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setShowConnectModal(true)}
-            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all shadow-md ${
+            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all shadow-sm ${
               isEsp32Connected
-                ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950'
-                : 'bg-gradient-to-r from-amber-400 via-sky-400 to-sky-500 hover:opacity-95 text-slate-950'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-[#164430] hover:bg-[#1e583e] text-[#FAF7F0]'
             }`}
             id="dash-connect-esp32-btn"
           >
-            <Usb className="h-4 w-4" />
+            <Usb className="h-4 w-4 text-[#C59B46]" />
             <span>{isEsp32Connected ? 'Manage ESP32 Link' : 'Connect ESP32 Hardware'}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('esp32')}
-            className="flex items-center gap-1 rounded-xl border border-[#1a365d] bg-[#081b3d] hover:bg-[#0d2a5e] px-3 py-2 text-xs font-bold text-slate-200 transition-colors"
+            className="flex items-center gap-1 rounded-xl border border-[#C59B46]/60 bg-[#FAF7F0] hover:bg-white px-3 py-2 text-xs font-bold text-[#164430] transition-colors shadow-xs"
           >
             <span>Firmware &amp; Pinout</span>
-            <ChevronRight className="h-3.5 w-3.5" />
+            <ChevronRight className="h-3.5 w-3.5 text-[#C59B46]" />
           </button>
         </div>
       </div>
@@ -209,153 +209,153 @@ export const DashboardOverview: React.FC = () => {
       {/* 4 Primary Metric Cards (Tailored for TNEB Consumer Use) */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Metric 1: Current Power Active Draw */}
-        <div className="relative overflow-hidden rounded-2xl border border-sky-500/30 bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-md">
+        <div className="relative overflow-hidden rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
               Instantaneous Load
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-500/20 text-sky-400 border border-sky-500/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-[#C59B46] border border-[#C59B46]/40">
               <Zap className="h-4 w-4" />
             </div>
           </div>
 
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold font-mono-num text-white tracking-tight">
+            <span className="text-3xl font-extrabold font-mono-num text-[#164430] tracking-tight">
               {metrics.currentPowerWatts}
             </span>
-            <span className="text-xs font-medium text-slate-400">Watts ({metrics.currentPowerKw} kW)</span>
+            <span className="text-xs font-medium text-slate-500">Watts ({metrics.currentPowerKw} kW)</span>
           </div>
 
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-[#1a365d]">
-            <div className="flex items-center gap-1 text-emerald-400 font-semibold">
+          <div className="mt-3 flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+            <div className="flex items-center gap-1 text-emerald-700 font-semibold">
               <Activity className="h-3 w-3 animate-pulse" />
               <span>Sanctioned: {userProfile.sanctionedLoadKw} kW</span>
             </div>
-            <span className="font-mono-num text-amber-300 font-bold">
+            <span className="font-mono-num text-[#164430] font-bold">
               {metrics.tnebSanctionedLoadPercent}% capacity
             </span>
           </div>
         </div>
 
         {/* Metric 2: Daily Consumption */}
-        <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm">
+        <div className="rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
               Today's Consumption
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
               <Calendar className="h-4 w-4" />
             </div>
           </div>
 
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold font-mono-num text-white tracking-tight">
+            <span className="text-3xl font-extrabold font-mono-num text-[#164430] tracking-tight">
               {metrics.dailyConsumptionKwh}
             </span>
-            <span className="text-xs font-medium text-slate-400">Units (kWh)</span>
+            <span className="text-xs font-medium text-slate-500">Units (kWh)</span>
           </div>
 
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-[#1a365d]">
+          <div className="mt-3 flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
             {isEsp32Connected ? (
               <>
-                <div className="flex items-center gap-1 text-emerald-400">
+                <div className="flex items-center gap-1 text-emerald-700">
                   <TrendingDown className="h-3 w-3" />
                   <span>-5.4% vs yesterday</span>
                 </div>
-                <span className="font-mono-num font-semibold text-slate-200">
+                <span className="font-mono-num font-semibold text-slate-700">
                   Run-rate: ~{(metrics.dailyConsumptionKwh * 30).toFixed(0)} units/mo
                 </span>
               </>
             ) : (
-              <span className="text-slate-500 font-medium">No Hardware Stream Active</span>
+              <span className="text-slate-400 font-medium">No Hardware Stream Active</span>
             )}
           </div>
         </div>
 
         {/* Metric 3: Estimated TNEB Bi-Monthly Bill */}
-        <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm">
+        <div className="rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+            <span className="text-xs font-bold text-[#C59B46] uppercase tracking-wider">
               TNEB Bi-Monthly Bill
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-[#C59B46] border border-[#C59B46]/40 font-bold">
               ₹
             </div>
           </div>
 
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold font-mono-num text-amber-300 tracking-tight">
+            <span className="text-3xl font-extrabold font-mono-num text-[#164430] tracking-tight">
               ₹{metrics.estimatedBiMonthlyBillINR}
             </span>
-            <span className="text-xs font-medium text-slate-400">for 60 days</span>
+            <span className="text-xs font-medium text-slate-500">for 60 days</span>
           </div>
 
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-[#1a365d]">
+          <div className="mt-3 flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
             {isEsp32Connected ? (
-              <span className="text-emerald-400 font-semibold">100 Free Units Applied</span>
+              <span className="text-emerald-700 font-semibold">100 Free Units Applied</span>
             ) : (
-              <span className="text-slate-500">Connect ESP32 to Calculate Bill</span>
+              <span className="text-slate-400">Connect ESP32 to Calculate Bill</span>
             )}
             <button
               onClick={() => setActiveTab('bill')}
-              className="text-sky-400 hover:underline flex items-center gap-0.5 font-semibold"
+              className="text-[#164430] hover:underline flex items-center gap-0.5 font-bold"
             >
               <span>View Slabs</span>
-              <ArrowUpRight className="h-3 w-3" />
+              <ArrowUpRight className="h-3 w-3 text-[#C59B46]" />
             </button>
           </div>
         </div>
 
         {/* Metric 4: Energy Efficiency Score */}
-        <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm">
+        <div className="rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
               Grid Efficiency Score
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
               <Gauge className="h-4 w-4" />
             </div>
           </div>
 
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold font-mono-num text-emerald-300 tracking-tight">
+            <span className="text-3xl font-extrabold font-mono-num text-emerald-700 tracking-tight">
               {isEsp32Connected ? metrics.efficiencyScore : '--'}
             </span>
-            <span className="text-xs font-medium text-slate-400">/ 100</span>
-            <span className="ml-auto rounded bg-emerald-500/20 px-2 py-0.5 text-[11px] font-bold text-emerald-300 border border-emerald-500/30">
+            <span className="text-xs font-medium text-slate-500">/ 100</span>
+            <span className="ml-auto rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 border border-emerald-300">
               {isEsp32Connected
                 ? metrics.efficiencyScore > 80 ? 'Grade A+' : metrics.efficiencyScore > 65 ? 'Grade B' : 'Grade C'
                 : 'Offline'}
             </span>
           </div>
 
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-[#1a365d]">
+          <div className="mt-3 flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
             <span>CO2: {metrics.carbonFootprintKg} kg</span>
             <button
               onClick={() => setActiveTab('advisor')}
-              className="text-sky-400 hover:underline flex items-center gap-0.5 font-semibold"
+              className="text-[#164430] hover:underline flex items-center gap-0.5 font-bold"
             >
               <span>Tips</span>
-              <ArrowUpRight className="h-3 w-3" />
+              <ArrowUpRight className="h-3 w-3 text-[#C59B46]" />
             </button>
           </div>
         </div>
       </div>
 
       {/* TNERC 100 Free Units & Bi-Monthly Tariff Milestone Tracker */}
-      <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-r from-[#081b3d] via-[#09224f] to-[#040e24] p-5 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#1a365d]">
+      <div className="rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-amber-400"></span>
+              <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#C59B46]"></span>
                 <span>TNERC Bi-Monthly Slab Progress (100 Free Units Scheme)</span>
               </h3>
-              <span className="rounded bg-sky-500/20 px-2 py-0.5 text-[10px] font-mono text-sky-300 border border-sky-500/30 font-bold">
+              <span className="rounded-lg bg-[#FAF7F0] px-2 py-0.5 text-[10px] font-mono text-[#164430] border border-[#C59B46]/40 font-bold">
                 {metrics.monthlyConsumptionKwh} / {metrics.goalKwh} Units
               </span>
             </div>
-            <p className="text-xs text-slate-300 mt-0.5">
+            <p className="text-xs text-slate-600 mt-0.5">
               Tamil Nadu Govt provides first 100 units 100% free under Domestic Tariff 1A. Slabs escalate past 200/400/500 units.
             </p>
           </div>
@@ -363,42 +363,42 @@ export const DashboardOverview: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={triggerGoalCelebration}
-              className="flex items-center gap-1.5 rounded-lg border border-amber-400/40 bg-amber-400/10 hover:bg-amber-400/20 px-3 py-1.5 text-xs font-bold text-amber-300 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg border border-[#C59B46]/50 bg-[#FAF7F0] hover:bg-white px-3 py-1.5 text-xs font-bold text-[#164430] transition-colors shadow-xs"
               title="Test slab optimization target"
             >
-              <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+              <Sparkles className="h-3.5 w-3.5 text-[#C59B46]" />
               <span>Within Free Tier Target</span>
             </button>
           </div>
         </div>
 
         <div className="mt-4 space-y-2">
-          <div className="flex justify-between text-xs font-mono-num text-slate-300">
-            <span className="text-emerald-400 font-bold">0 – 100 Free (₹0)</span>
-            <span className="text-sky-300 font-bold">101 – 200 (₹2.25)</span>
-            <span className="text-amber-300 font-bold">201 – 400 (₹4.50)</span>
-            <span className="text-rose-400 font-bold">&gt; 500 (₹8.00+)</span>
+          <div className="flex justify-between text-xs font-mono-num text-slate-600">
+            <span className="text-emerald-700 font-bold">0 – 100 Free (₹0)</span>
+            <span className="text-sky-700 font-bold">101 – 200 (₹2.25)</span>
+            <span className="text-amber-700 font-bold">201 – 400 (₹4.50)</span>
+            <span className="text-rose-700 font-bold">&gt; 500 (₹8.00+)</span>
           </div>
 
-          <div className="h-3.5 w-full overflow-hidden rounded-full bg-[#030b1e] p-0.5 border border-[#1a365d]">
+          <div className="h-3.5 w-full overflow-hidden rounded-full bg-slate-100 p-0.5 border border-slate-300">
             <div
               className={`h-full rounded-full transition-all duration-700 ${
                 metrics.goalPercentUsed > 90
                   ? 'bg-gradient-to-r from-amber-500 to-rose-500'
                   : metrics.goalPercentUsed > 75
-                  ? 'bg-gradient-to-r from-sky-400 to-amber-400'
-                  : 'bg-gradient-to-r from-emerald-400 to-sky-400'
+                  ? 'bg-gradient-to-r from-sky-400 to-amber-500'
+                  : 'bg-gradient-to-r from-emerald-500 to-emerald-600'
               }`}
               style={{ width: `${Math.min(100, metrics.goalPercentUsed)}%` }}
             />
           </div>
 
-          <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-300 pt-1">
+          <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-600 pt-1">
             <span>
-              Sanctioned Load Utilized: <strong className="text-amber-300">{(metrics.currentPowerWatts / 1000).toFixed(2)} kW / {userProfile.sanctionedLoadKw} kW</strong>
+              Sanctioned Load Utilized: <strong className="text-[#164430]">{(metrics.currentPowerWatts / 1000).toFixed(2)} kW / {userProfile.sanctionedLoadKw} kW</strong>
             </span>
             <span>
-              Govt Subsidy Benefitted: <strong className="text-emerald-400 font-bold">₹{metrics.govtSubsidyINR}.00</strong>
+              Govt Subsidy Benefitted: <strong className="text-emerald-700 font-bold">₹{metrics.govtSubsidyINR}.00</strong>
             </span>
           </div>
         </div>
@@ -407,14 +407,14 @@ export const DashboardOverview: React.FC = () => {
       {/* Main Charts & Load Curve Section */}
       <div className="grid gap-6 lg:grid-cols-12">
         {/* Left 8 Cols: Interactive Power Consumption Chart */}
-        <div className="lg:col-span-8 rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-[#1a365d]">
+        <div className="lg:col-span-8 rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-100">
             <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Activity className="h-4 w-4 text-sky-400" />
+              <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+                <Activity className="h-4 w-4 text-[#C59B46]" />
                 <span>TNEB Grid Consumption Profile & Diurnal Load</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 {chartMode === 'live'
                   ? 'Real-time telemetry stream from PZEM-004T sensor (1-second updates)'
                   : '24-hour diurnal profile highlighting TNEB evening peak hours (6:00 PM – 10:00 PM)'}
@@ -422,13 +422,13 @@ export const DashboardOverview: React.FC = () => {
             </div>
 
             {/* Timeframe selector */}
-            <div className="flex items-center rounded-xl bg-[#030b1e] p-1 border border-[#1a365d]">
+            <div className="flex items-center rounded-xl bg-[#FAF7F0] p-1 border border-[#C59B46]/30">
               <button
                 onClick={() => setChartMode('live')}
                 className={`rounded-lg px-3 py-1 text-xs font-bold transition-colors ${
                   chartMode === 'live'
-                    ? 'bg-sky-500 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#164430] text-[#FAF7F0] shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Live AMI Stream
@@ -437,8 +437,8 @@ export const DashboardOverview: React.FC = () => {
                 onClick={() => setChartMode('24h')}
                 className={`rounded-lg px-3 py-1 text-xs font-bold transition-colors ${
                   chartMode === '24h'
-                    ? 'bg-sky-500 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#164430] text-[#FAF7F0] shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 24-Hour Load Curve
@@ -449,21 +449,21 @@ export const DashboardOverview: React.FC = () => {
           {/* Chart Container */}
           <div className="relative h-72 w-full pt-2">
             {chartMode === 'live' && !isEsp32Connected && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-[#030b1e]/75 backdrop-blur-[2px] p-4 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-sky-500 text-slate-950 font-black shadow-lg mb-3">
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-white/90 backdrop-blur-[2px] p-4 text-center border border-[#C59B46]/30">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#164430] text-[#C59B46] font-black shadow-md mb-3">
                   <Cpu className="h-6 w-6" />
                 </div>
-                <h4 className="text-sm font-bold text-white mb-1">
+                <h4 className="text-sm font-bold text-[#164430] mb-1">
                   ESP32 Microcontroller Disconnected
                 </h4>
-                <p className="max-w-md text-xs text-slate-300 mb-3">
-                  Real-time telemetry is held at <strong className="text-amber-300">0 W</strong>. Simulated or fake data generation is disabled. Connect your physical ESP32 to stream active PZEM/CT readings.
+                <p className="max-w-md text-xs text-slate-600 mb-3">
+                  Real-time telemetry is standing at <strong className="text-[#164430]">0 W</strong>. Connect your physical ESP32 microcontroller to stream active PZEM/CT sensor readings.
                 </p>
                 <button
                   onClick={() => setShowConnectModal(true)}
-                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-sky-400 to-sky-500 px-4 py-2 text-xs font-black text-slate-950 shadow-md hover:opacity-95 transition-all"
+                  className="flex items-center gap-1.5 rounded-xl bg-[#164430] hover:bg-[#1e583e] px-4 py-2 text-xs font-black text-[#FAF7F0] shadow-sm transition-all"
                 >
-                  <Usb className="h-4 w-4" />
+                  <Usb className="h-4 w-4 text-[#C59B46]" />
                   <span>Connect ESP32 (Web Serial / WiFi / MQTT)</span>
                 </button>
               </div>
@@ -473,27 +473,28 @@ export const DashboardOverview: React.FC = () => {
                 <AreaChart data={liveTelemetry} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="livePowerGradTneb" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0284c7" stopOpacity={0.5} />
-                      <stop offset="95%" stopColor="#0284c7" stopOpacity={0.0} />
+                      <stop offset="5%" stopColor="#164430" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#164430" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1a2f55" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="timestamp" stroke="#64748b" fontSize={11} />
                   <YAxis stroke="#64748b" fontSize={11} domain={['auto', 'auto']} unit="W" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#071738',
-                      borderColor: '#1a365d',
+                      backgroundColor: '#ffffff',
+                      borderColor: '#C59B46',
                       borderRadius: '12px',
-                      color: '#f8fafc',
+                      color: '#164430',
                       fontSize: '12px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                     }}
                     formatter={(val: number) => [`${val} W`, 'Active Load']}
                   />
                   <Area
                     type="monotone"
                     dataKey="powerWatts"
-                    stroke="#38bdf8"
+                    stroke="#164430"
                     strokeWidth={2.5}
                     fillOpacity={1}
                     fill="url(#livePowerGradTneb)"
@@ -504,20 +505,21 @@ export const DashboardOverview: React.FC = () => {
                 <AreaChart data={dailyTelemetry} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="daily24hGradTneb" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0284c7" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#0284c7" stopOpacity={0.0} />
+                      <stop offset="5%" stopColor="#C59B46" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#C59B46" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1a2f55" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="timeLabel" stroke="#64748b" fontSize={11} />
                   <YAxis stroke="#64748b" fontSize={11} unit="W" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#071738',
-                      borderColor: '#1a365d',
+                      backgroundColor: '#ffffff',
+                      borderColor: '#C59B46',
                       borderRadius: '12px',
-                      color: '#f8fafc',
+                      color: '#164430',
                       fontSize: '12px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                     }}
                     formatter={(val: number, name: string, item: any) => [
                       `${val} W (${(val / 1000).toFixed(2)} kW)`,
@@ -527,7 +529,7 @@ export const DashboardOverview: React.FC = () => {
                   <Area
                     type="monotone"
                     dataKey="powerWatts"
-                    stroke="#0284c7"
+                    stroke="#C59B46"
                     strokeWidth={2.5}
                     fillOpacity={1}
                     fill="url(#daily24hGradTneb)"
@@ -538,35 +540,35 @@ export const DashboardOverview: React.FC = () => {
           </div>
 
           {/* Chart footer legend & indicators */}
-          <div className="flex flex-wrap items-center justify-between text-xs text-slate-300 pt-2 border-t border-[#1a365d]">
+          <div className="flex flex-wrap items-center justify-between text-xs text-slate-600 pt-2 border-t border-slate-100">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-sky-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#164430]" />
                 <span>Base load</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#C59B46]" />
                 <span>TNEB Evening Peak Window (6 PM – 10 PM)</span>
               </span>
             </div>
             <button
               onClick={() => setActiveTab('analytics')}
-              className="text-sky-400 hover:underline flex items-center gap-1 font-semibold"
+              className="text-[#164430] hover:underline flex items-center gap-1 font-bold"
             >
               <span>Full Analytics Suite</span>
-              <ArrowUpRight className="h-3 w-3" />
+              <ArrowUpRight className="h-3 w-3 text-[#C59B46]" />
             </button>
           </div>
         </div>
 
         {/* Right 4 Cols: Live Load Breakdown Pie */}
-        <div className="lg:col-span-4 rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-          <div className="pb-2 border-b border-[#1a365d]">
-            <h3 className="text-sm font-bold text-white flex items-center justify-between">
+        <div className="lg:col-span-4 rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm space-y-4">
+          <div className="pb-2 border-b border-slate-100">
+            <h3 className="text-sm font-bold text-[#164430] flex items-center justify-between">
               <span>Appliance Load Split</span>
-              <span className="text-xs font-mono font-bold text-amber-300">{metrics.currentPowerWatts}W</span>
+              <span className="text-xs font-mono font-bold text-[#C59B46]">{metrics.currentPowerWatts}W</span>
             </h3>
-            <p className="text-xs text-slate-400">Sub-circuit distribution on mains breaker</p>
+            <p className="text-xs text-slate-500">Sub-circuit distribution on mains breaker</p>
           </div>
 
           <div className="h-44 w-full relative flex items-center justify-center">
@@ -587,33 +589,34 @@ export const DashboardOverview: React.FC = () => {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#071738',
-                    borderColor: '#1a365d',
+                    backgroundColor: '#ffffff',
+                    borderColor: '#C59B46',
                     borderRadius: '8px',
                     fontSize: '11px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                   }}
                   formatter={(val: number) => [`${val} W`, 'Load']}
                 />
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-lg font-bold font-mono-num text-white">{metrics.currentPowerWatts}W</span>
-              <span className="text-[10px] text-sky-400 font-bold">Active Load</span>
+              <span className="text-lg font-bold font-mono-num text-[#164430]">{metrics.currentPowerWatts}W</span>
+              <span className="text-[10px] text-slate-500 font-bold">Active Load</span>
             </div>
           </div>
 
           {/* Mini active list */}
           <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
             {topAppliances.slice(0, 4).map((app) => (
-              <div key={app.id} className="flex items-center justify-between text-xs py-1 border-b border-[#1a365d]/50">
+              <div key={app.id} className="flex items-center justify-between text-xs py-1 border-b border-slate-100">
                 <div className="flex items-center gap-2 truncate">
                   <span
                     className="h-2 w-2 rounded-full shrink-0"
                     style={{ backgroundColor: categoryColors[app.category] || '#0284c7' }}
                   />
-                  <span className="text-slate-300 truncate font-medium">{app.name}</span>
+                  <span className="text-slate-700 truncate font-medium">{app.name}</span>
                 </div>
-                <span className="font-mono-num font-bold text-amber-300">
+                <span className="font-mono-num font-bold text-[#164430]">
                   {app.status === 'on' ? `${app.currentWatts}W` : 'Standby'}
                 </span>
               </div>
@@ -623,24 +626,24 @@ export const DashboardOverview: React.FC = () => {
       </div>
 
       {/* Appliance Quick Power Matrix with 1-Click Toggles */}
-      <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-[#1a365d]">
+      <div className="rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-100">
           <div>
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Sliders className="h-4 w-4 text-sky-400" />
+            <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+              <Sliders className="h-4 w-4 text-[#C59B46]" />
               <span>Consumer Circuit Relays & Instant Control</span>
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Interactive load shedding to prevent exceeding TNEB 5.0 kW Sanctioned Demand
             </p>
           </div>
 
           <button
             onClick={() => setActiveTab('appliances')}
-            className="text-xs font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1"
+            className="text-xs font-bold text-[#164430] hover:underline flex items-center gap-1"
           >
             <span>All Circuits & Appliances ({appliances.length})</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
+            <ArrowUpRight className="h-3.5 w-3.5 text-[#C59B46]" />
           </button>
         </div>
 
@@ -650,8 +653,8 @@ export const DashboardOverview: React.FC = () => {
               key={app.id}
               className={`rounded-xl border p-3.5 transition-all ${
                 app.status === 'on'
-                  ? 'bg-[#061738] border-sky-500/40 shadow-sm'
-                  : 'bg-[#030b1e]/60 border-[#1a365d] opacity-75'
+                  ? 'bg-[#FAF7F0] border-[#C59B46]/70 shadow-xs'
+                  : 'bg-white border-slate-200'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -659,8 +662,8 @@ export const DashboardOverview: React.FC = () => {
                   <div
                     className={`flex h-8 w-8 items-center justify-center rounded-lg ${
                       app.status === 'on'
-                        ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
-                        : 'bg-[#0a1e42] text-slate-400'
+                        ? 'bg-[#164430] text-[#C59B46]'
+                        : 'bg-slate-100 text-slate-500'
                     }`}
                   >
                     {app.category === 'hvac' ? (
@@ -676,10 +679,10 @@ export const DashboardOverview: React.FC = () => {
                     )}
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white truncate max-w-[150px]">
+                    <h4 className="text-xs font-bold text-slate-900 truncate max-w-[150px]">
                       {app.name}
                     </h4>
-                    <span className="text-[10px] text-slate-400">{app.room} • {app.ratingWatts}W rating</span>
+                    <span className="text-[10px] text-slate-500">{app.room} • {app.ratingWatts}W rating</span>
                   </div>
                 </div>
 
@@ -687,8 +690,8 @@ export const DashboardOverview: React.FC = () => {
                   onClick={() => toggleAppliance(app.id)}
                   className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
                     app.status === 'on'
-                      ? 'bg-sky-500 text-slate-950 shadow-sm'
-                      : 'bg-[#0a1e42] text-slate-400 hover:text-white border border-[#1a365d]'
+                      ? 'bg-[#164430] text-[#FAF7F0] shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-300'
                   }`}
                   id={`dashboard-toggle-${app.id}`}
                 >
@@ -696,9 +699,9 @@ export const DashboardOverview: React.FC = () => {
                 </button>
               </div>
 
-              <div className="mt-3 flex items-center justify-between text-xs pt-2 border-t border-[#1a365d]">
-                <span className="text-slate-400">Power Draw:</span>
-                <span className="font-mono-num font-bold text-amber-300">
+              <div className="mt-3 flex items-center justify-between text-xs pt-2 border-t border-slate-100">
+                <span className="text-slate-500">Power Draw:</span>
+                <span className="font-mono-num font-bold text-[#164430]">
                   {app.status === 'on' ? `${app.currentWatts} W` : `Standby (${app.standbyWatts}W)`}
                 </span>
               </div>
@@ -710,15 +713,15 @@ export const DashboardOverview: React.FC = () => {
       {/* Two-Column Section: Active Outage Notices / Grievances & Energy Saving Advice */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Active Outage & Grid Notices Box */}
-        <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-b from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <ShieldAlert className="h-4 w-4 text-amber-400" />
+        <div className="rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 text-[#C59B46]" />
               <span>TNEB Outage Notices & Grid Alerts</span>
             </h3>
             <button
               onClick={() => setActiveTab('alerts')}
-              className="text-xs text-sky-400 hover:underline font-semibold"
+              className="text-xs text-[#164430] hover:underline font-bold"
             >
               View All ({activeAlerts.length})
             </button>
@@ -728,21 +731,21 @@ export const DashboardOverview: React.FC = () => {
             {outageNotices.slice(0, 1).map((outage) => (
               <div
                 key={outage.id}
-                className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs space-y-1.5"
+                className="rounded-xl border border-amber-200 bg-amber-50/80 p-3.5 text-xs space-y-1.5"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-amber-200 flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="font-bold text-amber-900 flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-amber-700" />
                     <span>{outage.title}</span>
                   </span>
-                  <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold text-amber-300 uppercase">
+                  <span className="rounded-md bg-amber-200/70 px-1.5 py-0.5 text-[9px] font-bold text-amber-900 uppercase">
                     {outage.category}
                   </span>
                 </div>
-                <p className="text-slate-300 leading-relaxed">{outage.description}</p>
-                <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-                  <span>Substation: <strong className="text-white">{outage.substation}</strong></span>
-                  <span className="text-amber-300 font-mono font-semibold">{outage.timing}</span>
+                <p className="text-slate-700 leading-relaxed">{outage.description}</p>
+                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                  <span>Substation: <strong className="text-slate-900">{outage.substation}</strong></span>
+                  <span className="text-[#164430] font-mono font-bold">{outage.timing}</span>
                 </div>
               </div>
             ))}
@@ -750,25 +753,25 @@ export const DashboardOverview: React.FC = () => {
             {activeAlerts.slice(0, 1).map((alert) => (
               <div
                 key={alert.id}
-                className="rounded-xl border border-[#1a365d] bg-[#061738] p-3 flex items-start gap-3"
+                className="rounded-xl border border-slate-200 bg-[#FAF7F0] p-3 flex items-start gap-3"
               >
                 <div
                   className={`mt-0.5 rounded-lg p-1.5 ${
                     alert.severity === 'critical'
-                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                      : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                      ? 'bg-rose-100 text-rose-700 border border-rose-300'
+                      : 'bg-amber-100 text-amber-700 border border-amber-300'
                   }`}
                 >
                   <AlertTriangle className="h-4 w-4" />
                 </div>
                 <div className="flex-1 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-white">{alert.title}</span>
-                    <span className="text-[10px] text-slate-400">{alert.timestamp}</span>
+                    <span className="font-bold text-slate-900">{alert.title}</span>
+                    <span className="text-[10px] text-slate-500">{alert.timestamp}</span>
                   </div>
-                  <p className="text-slate-300 mt-1">{alert.description}</p>
+                  <p className="text-slate-600 mt-1">{alert.description}</p>
                   {alert.detectedValue && (
-                    <div className="mt-1 text-[11px] font-mono text-amber-300">
+                    <div className="mt-1 text-[11px] font-mono text-[#164430] font-bold">
                       Reading: {alert.detectedValue} (Cap: {alert.thresholdValue})
                     </div>
                   )}
@@ -779,30 +782,30 @@ export const DashboardOverview: React.FC = () => {
         </div>
 
         {/* AI Energy-Saving Tip Card with BEE Star Ratings */}
-        <div className="rounded-2xl border border-[#1a365d] bg-gradient-to-br from-[#081b3d] to-[#040e24] p-5 shadow-sm space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-[#1a365d]">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Lightbulb className="h-4 w-4 text-amber-400" />
+        <div className="rounded-2xl border-2 border-[#C59B46]/40 bg-white/95 p-5 shadow-sm space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 className="text-sm font-bold text-[#164430] flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-[#C59B46]" />
               <span>TNEB Energy Conservation Recommendation</span>
             </h3>
-            <span className="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30">
+            <span className="rounded-lg bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-800 border border-amber-300">
               High Bill Impact
             </span>
           </div>
 
           {suggestions[0] && (
             <div className="space-y-3">
-              <h4 className="text-sm font-bold text-slate-100">
+              <h4 className="text-sm font-bold text-slate-900">
                 {suggestions[0].title}
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 {suggestions[0].description}
               </p>
 
-              <div className="flex items-center justify-between rounded-xl bg-[#030b1e] p-3 border border-[#1a365d] text-xs">
+              <div className="flex items-center justify-between rounded-xl bg-[#FAF7F0] p-3 border border-[#C59B46]/30 text-xs">
                 <div>
-                  <span className="text-slate-400">Potential Bi-Monthly Bill Saving:</span>
-                  <div className="text-sm font-bold text-emerald-400 font-mono-num">
+                  <span className="text-slate-500">Potential Bi-Monthly Bill Saving:</span>
+                  <div className="text-sm font-bold text-emerald-700 font-mono-num">
                     +₹{suggestions[0].potentialMonthlySavingsINR || 340} / {suggestions[0].potentialMonthlySavingsKWh} Units
                   </div>
                 </div>
@@ -812,8 +815,8 @@ export const DashboardOverview: React.FC = () => {
                   disabled={suggestions[0].applied}
                   className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
                     suggestions[0].applied
-                      ? 'bg-[#0a2046] text-emerald-400'
-                      : 'bg-gradient-to-r from-amber-500 to-sky-500 hover:from-amber-400 hover:to-sky-400 text-slate-950 shadow-md font-bold'
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                      : 'bg-[#164430] hover:bg-[#1e583e] text-[#FAF7F0] shadow-sm font-bold'
                   }`}
                   id="dash-apply-suggestion-btn"
                 >
